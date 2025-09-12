@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { resumeData } from '@/data/resume';
 import { cn } from '@/lib/utils';
 
@@ -6,6 +6,7 @@ import { cn } from '@/lib/utils';
 export default function Home() {
   const [activeCategory, setActiveCategory] = useState('all');
   const [scrolled, setScrolled] = useState(false);
+  const [expandedProjects, setExpandedProjects] = useState<Record<number, boolean>>({});
   
   // 监听滚动事件，用于导航栏样式变化
   useEffect(() => {
@@ -15,6 +16,14 @@ export default function Home() {
     
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
+  // 切换项目展开/折叠状态
+  const toggleProjectExpand = useCallback((index: number) => {
+    setExpandedProjects(prev => ({
+      ...prev,
+      [index]: !prev[index]
+    }));
   }, []);
   
   // 根据选择的类别筛选项目
@@ -96,7 +105,7 @@ export default function Home() {
               <i className="fa-solid fa-user-circle mr-2 text-blue-500"></i>关于我
             </h2>
             <p className="text-gray-700 dark:text-gray-300 leading-relaxed">
-              我是一名毕业于美国乔治华盛顿大学的硕士，本科就读于宁波诺丁汉大学，本科和硕士都是计算机科学专业，目前正在上海寻找工作机会。我的研究兴趣包括深度学习、计算机视觉和自然语言处理，特别是深度学习在智慧设备或穿戴设备中的应用。同时我也感兴趣程序架构设计、重构、再开发等。在深度学习领域发表过两篇论文，有一次从0到1从设计到使用Python和Django开发、测试微信小程序后端的经历。
+              我是一名拥有计算机科学硕士学位的全栈开发工程师和机器学习研究员，擅长将理论知识转化为实际应用。我的技术背景涵盖软件工程、深度学习和计算机视觉等多个领域，具有丰富的项目开发经验和学术研究经历。我热衷于解决复杂问题，创造高效且用户友好的技术解决方案。
             </p>
           </div>
         </section>
@@ -273,11 +282,16 @@ export default function Home() {
                   
                   <h4 className="font-medium text-gray-900 dark:text-gray-100 mb-2 text-sm">项目描述:</h4>
                   <ul className="list-disc list-inside text-gray-700 dark:text-gray-300 text-sm space-y-1 mb-4">
-                    {project.description.slice(0, 2).map((desc, idx) => (
+                    {project.description.slice(0, expandedProjects[index] ? project.description.length : 2).map((desc, idx) => (
                       <li key={idx}>{desc}</li>
                     ))}
                     {project.description.length > 2 && (
-                      <li className="text-gray-500">... 查看更多</li>
+                      <button 
+                        onClick={() => toggleProjectExpand(index)}
+                        className="text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 hover:underline text-sm font-medium transition-colors mt-1"
+                      >
+                        {expandedProjects[index] ? '收起' : '查看更多'}
+                      </button>
                     )}
                   </ul>
                   

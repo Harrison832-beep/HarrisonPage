@@ -175,17 +175,16 @@ export const resumeData = {
       { name: "日语", level: "基础日语" }
     ],
     programming: [
-      "Python ", "Java", "C", "C++", "Haskell", "SQL", "JavaScript", 
-      "Kotlin", "UE4 Blueprint", "Julia", "Bash", "Clojure", "HTML", 
-      "CSS", "React"
+      "Python", "Java", "C", "C++", "Haskell", "SQL", "JavaScript", 
+      "Kotlin", "UE4 Blueprint", "Julia", "Bash", "Clojure"
     ],
     technologies: [
       "深度学习", "PyTorch", "Sklearn", "Numpy", "Pandas", "OpenCV", 
       "OpenAI", "Google Gemini", "计算机视觉", "Transformer", "Attention", 
       "ResNet", "CNN", "Q 学习", "Expectimax", "UE4 经验", "Django", 
       "Flask", "JavaFX", "UNIX/Linux 系统", "PySpark", "设计模式", 
-      "UML", "Git", "图数据库", "用例图", 
-      "活动图", "时序图", "类图", "Agile开发", "单元测试", "Git"
+      "UML", "Git", "图数据库", "HTML", "CSS", "React", "用例图", 
+      "活动图", "时序图", "类图"
     ]
   },
   publications: [

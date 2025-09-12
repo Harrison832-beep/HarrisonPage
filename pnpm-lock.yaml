@@ -14,9 +14,6 @@ importers:
       framer-motion:
         specifier: ^12.9.2
         version: 12.10.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      project_template_react:
-        specifier: 'link:'
-        version: 'link:'
       react:
         specifier: ^18.3.1
         version: 18.3.1

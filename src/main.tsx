@@ -6,8 +6,10 @@ import App from "./App.tsx";
 import "./index.css";
 
 createRoot(document.getElementById("root")!).render(
-  <BrowserRouter>
-    <App />
-    <Toaster />
-  </BrowserRouter>
+  <StrictMode>
+    <BrowserRouter>
+      <App />
+      <Toaster />
+    </BrowserRouter>
+  </StrictMode>
 );
