@@ -3,7 +3,7 @@
   "private": true,
   "version": "0.0.1",
   "type": "module",
-  "homepage": "https://harrison832-beep.github.io/HarrisonPage",
+  "homepage": ".",
   "scripts": {
     "dev:client": "vite --host --port 3000",
     "dev": "pnpm dev:client",
