@@ -10,7 +10,9 @@
     "build:client": "vite build --outDir dist/static",
   "build": "rm -rf dist && pnpm build:client && cp package.json dist && touch dist/build.flag",
   "predeploy": "pnpm run build && echo 'Build successful'",
-  "deploy": "gh-pages -d build"
+  "deploy": "gh-pages -d dist -b gh-pages -r https://github.com/harrison832-beep/HarrisonPage.git",
+    "preview:client": "vite preview --port 3000",
+    "preview": "pnpm preview:client"
   },
   "dependencies": {
     "clsx": "^2.1.1",
