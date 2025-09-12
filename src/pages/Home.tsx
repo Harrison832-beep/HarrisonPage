@@ -64,10 +64,12 @@ export default function Home() {
       <main className="container mx-auto px-4 md:px-6 pt-28 pb-20">
         {/* 个人信息头部 */}
         <section id="about" className="mb-20 text-center">
-          <div className="relative inline-block mb-6">
-            <div className="w-32 h-32 md:w-40 md:h-40 rounded-full bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center text-white text-4xl md:text-5xl font-bold">
-              陈
-            </div>
+           <div className="relative inline-block mb-6">
+           <img 
+  src="https://lf-code-agent.coze.cn/obj/x-ai-cn/255345043714/attachment/2304d15d2777c8c920260d702845c547_20250912234233.jpg" 
+  alt="陈起成头像" 
+  className="w-64 h-48 md:w-96 md:h-72 rounded-xl object-cover border-4 border-white dark:border-gray-900 shadow-lg"
+/>
             <div className="absolute -bottom-2 -right-2 bg-green-500 rounded-full w-10 h-10 flex items-center justify-center border-4 border-white dark:border-gray-900">
               <i className="fa-solid fa-check text-white"></i>
             </div>
@@ -94,8 +96,8 @@ export default function Home() {
                 <i className="fa-brands fa-linkedin"></i>
                 <span>LinkedIn</span>
               </a>
-              <a href="https://github.com/Harrison832-Beep" target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 px-4 py-2 rounded-full bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors">
-                <i className="fa-brands fa-github"></i>
+               <a href="https://github.com/Harrison832-Beep" target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 px-4 py-2 rounded-full bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors">
+                <i className="fa-brands fa-github text-xl"></i>
                 <span>GitHub</span>
               </a>
             </div>
@@ -104,8 +106,8 @@ export default function Home() {
             <h2 className="text-xl font-semibold mb-4 flex items-center">
               <i className="fa-solid fa-user-circle mr-2 text-blue-500"></i>关于我
             </h2>
-            <p className="text-gray-700 dark:text-gray-300 leading-relaxed">
-              我是一名拥有计算机科学硕士学位的全栈开发工程师和机器学习研究员，擅长将理论知识转化为实际应用。我的技术背景涵盖软件工程、深度学习和计算机视觉等多个领域，具有丰富的项目开发经验和学术研究经历。我热衷于解决复杂问题，创造高效且用户友好的技术解决方案。
+             <p className="text-gray-700 dark:text-gray-300 leading-relaxed">
+ 我是一名毕业于美国乔治华盛顿大学的硕士，本科就读于宁波诺丁汉大学，本科和硕士都是计算机科学专业，目前正在上海寻找工作机会。我的研究兴趣包括深度学习、计算机视觉和自然语言处理，特别是深度学习在智慧设备或穿戴设备中的应用。同时我也感兴趣程序架构设计、重构、再开发等。在深度学习领域发表过两篇论文，有一次从0到1从设计到使用Python和Django开发、测试微信小程序后端的经历。
             </p>
           </div>
         </section>
@@ -260,7 +262,7 @@ export default function Home() {
                         rel="noopener noreferrer"
                         className="text-blue-600 dark:text-blue-400 hover:underline"
                       >
-                        <i className="fa-brands fa-github"></i>
+                      <i className="fa-brands fa-github text-2xl"></i>
                       </a>
                     )}
                   </div>
@@ -442,8 +444,8 @@ export default function Home() {
             <a href={resumeData.contact.linkedin} target="_blank" rel="noopener noreferrer" className="text-gray-600 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 transition-colors">
               <i className="fa-brands fa-linkedin text-xl"></i>
             </a>
-              <a href="https://github.com/Harrison832-Beep" target="_blank" rel="noopener noreferrer" className="text-gray-600 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 transition-colors">
-              <i className="fa-brands fa-github text-xl"></i>
+               <a href="https://github.com/Harrison832-Beep" target="_blank" rel="noopener noreferrer" className="text-gray-600 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 transition-colors">
+                <i className="fa-brands fa-github text-xl"></i>
             </a>
             <a href={`mailto:${resumeData.contact.email}`} className="text-gray-600 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 transition-colors">
               <i className="fa-regular fa-envelope text-xl"></i>
