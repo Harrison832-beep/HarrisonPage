@@ -3,13 +3,12 @@
   "private": true,
   "version": "0.0.1",
   "type": "module",
-  "homepage": "https://harrison832-beep.github.io/HarrisonPage/",
+  "homepage": "https://harrison832-beep.github.io/HarrisonPage",
   "scripts": {
     "dev:client": "vite --host --port 3000",
     "dev": "pnpm dev:client",
     "build:client": "vite build --outDir dist/static",
   "build": "rm -rf dist && pnpm build:client && cp package.json dist && touch dist/build.flag",
-  "predeploy": "pnpm run build",
   "deploy": "gh-pages -d dist/static -b gh-pages",
   "predeploy": "pnpm run build && echo 'Build successful'"
   },
