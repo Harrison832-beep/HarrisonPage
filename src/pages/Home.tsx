@@ -123,9 +123,9 @@ export default function Home() {
             </div>
           </div>
           
-           <h1 className="text-4xl md:text-5xl font-bold mb-4 bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
-            {currentResumeData.name}
-          </h1>
+             <h1 className="text-4xl md:text-4xl lg:text-5xl font-bold mb-4 pb-4 bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
+               {currentResumeData.name}
+             </h1>
           
             <div className="text-lg text-gray-600 dark:text-gray-400 mb-6 max-w-2xl mx-auto">
               <p>{currentResumeData.career}</p>
@@ -155,9 +155,9 @@ export default function Home() {
               <i className="fa-solid fa-user-circle mr-2 text-blue-500"></i>{translations.sections.aboutMe[language]}
             </h2>
              <p className="text-gray-700 dark:text-gray-300 leading-relaxed">
- {language === 'zh'
-   ? '我是一名毕业于美国乔治华盛顿大学的硕士，本科就读于宁波诺丁汉大学，本科和硕士都是计算机科学专业，目前正在上海寻找工作机会。我的研究兴趣包括深度学习、计算机视觉和自然语言处理，特别是深度学习在智慧设备或穿戴设备中的应用。同时我也感兴趣Python后端开发、程序架构设计、重构、再开发等。在深度学习领域发表过两篇论文，有一次从0到1从设计到使用Python和Django开发、测试微信小程序后端的经历。'
-   : 'I am a master\'s graduate from The George Washington University with a Bachelor\'s degree from the University of Nottingham Ningbo China, both in Computer Science. I am currently seeking job opportunities in Shanghai. My research interests include deep learning, computer vision, and natural language processing, particularly the application of deep learning in smart devices or wearable devices. I am also interested in Python backend development, software architecture, and software refactoring. I have published two papers in the field of deep learning and have experience developing and testing a WeChat mini-program backend from scratch using Python and Django.'}
+ {language === 'zh' 
+   ? '我是一名毕业于美国乔治华盛顿大学的硕士，本科就读于宁波诺丁汉大学，本科和硕士都是计算机科学专业，目前正在上海寻找工作机会。我的研究兴趣包括深度学习、计算机视觉和自然语言处理，特别是深度学习在智慧设备或穿戴设备中的应用。同时我也感兴趣程序架构设计、重构、再开发等。在深度学习领域发表过两篇论文，有一次从0到1从设计到使用Python和Django开发、测试微信小程序后端的经历。' 
+   : 'I am a master\'s graduate from The George Washington University with a Bachelor\'s degree from the University of Nottingham Ningbo China, both in Computer Science. I am currently seeking job opportunities in Shanghai. My research interests include deep learning, computer vision, and natural language processing, particularly the application of deep learning in smart devices or wearable devices. I am also interested in software development, software architecture, and software refactoring. I have published two papers in the field of deep learning and have experience developing and testing a WeChat mini-program backend from scratch using Python and Django.'}
             </p>
           </div>
         </section>

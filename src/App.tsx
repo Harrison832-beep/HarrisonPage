@@ -17,8 +17,8 @@ export default function App() {
         value={{ isAuthenticated, setIsAuthenticated, logout }}
       >
         <Routes>
-          <Route path="/HarrisonPage" element={<Home />} />
-          <Route path="/HarrisonPage/other" element={<div className="text-center text-xl">Other Page - Coming Soon</div>} />
+          <Route path="/" element={<Home />} />
+          <Route path="/other" element={<div className="text-center text-xl">Other Page - Coming Soon</div>} />
         </Routes>
       </AuthContext.Provider>
     </LanguageProvider>
