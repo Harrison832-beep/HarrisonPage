@@ -1,14 +1,26 @@
 import { Routes, Route } from "react-router-dom";
 import Home from "@/pages/Home";
-import { baseName } from "./router";
+import { useState } from "react";
+import { AuthContext } from '@/contexts/authContext';
+import { LanguageProvider } from '@/contexts/languageContext.tsx';
 
 export default function App() {
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+
+  const logout = () => {
+    setIsAuthenticated(false);
+  };
 
   return (
-    <div>
-      <Routes>
-        <Route path={`/${baseName}`} element={<Home />} />
-      </Routes>
-    </div>
+    <LanguageProvider>
+      <AuthContext.Provider
+        value={{ isAuthenticated, setIsAuthenticated, logout }}
+      >
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/other" element={<div className="text-center text-xl">Other Page - Coming Soon</div>} />
+        </Routes>
+      </AuthContext.Provider>
+    </LanguageProvider>
   );
 }

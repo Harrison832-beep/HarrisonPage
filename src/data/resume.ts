@@ -1,9 +1,10 @@
 export const resumeData = {
   name: "陈起成",
+  career: "计算机科学硕士 | Python后端开发 | 深度学习 | 软件架构 | 面向对象编程",
   contact: {
     email: "wharrison832@gmail.com",
     phone: "+86 17389794618",
-    linkedin: "www.linkedin.com/in/qicheng-chen"
+    linkedin: "www.linkedin.com/in/qicheng-chen" 
   },
   education: [
     {
@@ -57,7 +58,7 @@ export const resumeData = {
       category: "development"
     },
     {
-      title: "集装箱港口 VR 游戏",
+       title: "集装箱港口作业流程VR模拟与优化系统",
       location: "中国，宁波",
       role: "UE4 重构与再开发",
       period: "2021.09 – 2022.05",
@@ -70,7 +71,7 @@ export const resumeData = {
       category: "development"
     },
     {
-      title: "微信聊天机器人小程序",
+       title: "基于NLP的智能医疗问诊微信小程序",
       link: "https://github.com/Harrison832-beep/NingboBigDataCompetition",
       location: "中国，宁波",
       role: "Python 后端开发",
@@ -83,7 +84,7 @@ export const resumeData = {
       category: "development"
     },
     {
-      title: "推箱子游戏",
+      title: "Java推箱子游戏重构与再开发",
       link: "https://github.com/Harrison832-beep/SokobanGame",
       location: "中国，宁波",
       role: "Java 重构与再开发",
@@ -96,7 +97,7 @@ export const resumeData = {
       category: "development"
     },
     {
-      title: "中国银行 Java 程序设计与开发",
+       title: "基于Java的银行核心业务系统模块化设计与实现",
       location: "中国，宁波",
       role: "Java 开发",
       period: "2020.4 – 2020.5",
@@ -121,7 +122,7 @@ export const resumeData = {
       category: "machine-learning"
     },
     {
-      title: "飞行棋人工智能",
+      title: "飞行棋博弈AI系统设计与实现",
       link: "https://github.com/Harrison832-beep/AeroplaneChessAI",
       location: "美国，华盛顿特区",
       role: "独立开发",
@@ -133,7 +134,7 @@ export const resumeData = {
       category: "machine-learning"
     },
     {
-      title: "拼图求解器",
+      title: "基于机器视觉的拼图还原算法",
       link: "https://github.com/Harrison832-beep/JigsawPuzzleSolver",
       location: "美国，华盛顿特区",
       role: "独立开发",
