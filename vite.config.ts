@@ -12,5 +12,8 @@ function getPlugins() {
 }
 
 export default defineConfig({
+  // Set base to the repo name so built assets will be served from
+  // /HarrisonPage/ (e.g. /HarrisonPage/assets/index-xxxxx.js)
+  base: "/HarrisonPage/",
   plugins: getPlugins(),
 });
