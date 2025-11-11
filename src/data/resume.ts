@@ -116,7 +116,7 @@ export const resumeData = {
       period: "2024.09 – 2025.06",
       description: [
         "通过 OpenAI 和 Google Cloud API 使用 ChatGPT4o-mini、Gemini-1.0-pro、Gemini-1.5-flash 预测 Amazon-M2 数据集中用户的未来产品互动，最终 MRR@100 达到 0.6787，Recall@100 达到 0.9478，高于现有模型 20%。",
-        "将商品信息通过 OpenAI 转换成小型 Embeddings 再使用基础模型 Lasso Regression、SVR、Linear Regression 和深度模型 CNN、Transformer 对未来产品预测实验，最高 MRR@100 达到 0.0106，Recall@100 达到 0.1014。",
+        "将商品信息通过 OpenAI 转换成小型 Embeddings 再使用基础模型 Lasso Regression、SVR、Linear Regression 和深度模型 CNN、Transformer对未来产品预测实验，最高 MRR@100 达到 0.0106，Recall@100 达到 0.1014。",
         "撰写 800 字论文并在 HCII 2025 上展示项目，论文在《Human Interface and the Management of Information》proceedings 上发表。"
       ],
       category: "machine-learning"
@@ -164,7 +164,7 @@ export const resumeData = {
       period: "2021.11 – 2021.12",
       description: [
         "使用 Python 和 PyTorch 处理 CIFAR-10 图片数据集并使用不同的机器学习模型例如 SVM、MLP、决策树还有 PVC 对数据集中的图片进行分类。",
-        "实验多种经典 CNN 模型如 LeNet、AlexNet、VGG-16、VGG-32 等对 CIFAR-10 进行图片分类，最高准确率达到 88%。"
+        "使用PyTorch复现并实验多种经典 CNN 模型如 LeNet、AlexNet、VGG-16、ViT-B16等对 CIFAR-10 进行图片分类，最高准确率达到 92%。",
       ],
       category: "machine-learning"
     }
