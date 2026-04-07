@@ -32,16 +32,6 @@ export const resumeDataEn = {
   ],
   internships: [
     {
-      company: "Independent Project",
-      location: "Personal Project",
-      position: "LLM Application Developer (React + FastAPI)",
-      period: "March 2026 - Present",
-      responsibilities: [
-        "Built an AI PDF application with React and FastAPI, supporting intelligent processing and question answering over PDF, CSV, and Excel files",
-        "Implemented an LLM workflow with Ollama, Llama 3, embeddings, and LangGraph to support local inference, retrieval-augmented generation, and multi-step orchestration"
-      ]
-    },
-    {
       company: "Kineviz",
       location: "Ningbo Zhejiang",
       position: "Node.js Developer",
@@ -54,6 +44,17 @@ export const resumeDataEn = {
   ],
   projects: [
     // Development projects
+    {
+      title: "AI PDF Intelligent Document QA App",
+      location: "Personal Project",
+      role: "Independent Developer",
+      period: "March 2026 - Present",
+      description: [
+        "Built an AI PDF application with React and FastAPI, supporting intelligent processing and question answering over PDF, CSV, and Excel files",
+        "Implemented an LLM workflow with Ollama, Llama 3, embeddings, and LangGraph to support local inference, retrieval-augmented generation, and multi-step orchestration"
+      ],
+      category: "development"
+    },
     {
       title: "Snake Game Implementation with Julia",
       link: "https://github.com/KTisKIM/csci_6221",

@@ -32,16 +32,6 @@ export const resumeData = {
   ],
   internships: [
     {
-      company: "独立开发项目",
-      location: "个人项目",
-      position: "LLM 应用开发（React + FastAPI）",
-      period: "2026.03 - 至今",
-      responsibilities: [
-        "使用 React 与 FastAPI 开发 AI PDF 应用，支持 PDF、CSV、Excel 等多类型文件的智能处理与问答交互。",
-        "基于 Ollama、Llama 3、Embedding 与 LangGraph 搭建大模型工作流，完善本地推理、检索增强与多步骤编排能力。"
-      ]
-    },
-    {
       company: "Kineviz",
       location: "中国，宁波",
       position: "Node.js 开发",
@@ -54,6 +44,17 @@ export const resumeData = {
   ],
   projects: [
     // 开发相关项目
+    {
+      title: "AI PDF 智能文档问答应用",
+      location: "个人项目",
+      role: "独立开发",
+      period: "2026.03 - 至今",
+      description: [
+        "使用 React 与 FastAPI 开发 AI PDF 应用，支持 PDF、CSV、Excel 等多类型文件的智能处理与问答交互。",
+        "基于 Ollama、Llama 3、Embedding 与 LangGraph 搭建大模型工作流，完善本地推理、检索增强与多步骤编排能力。"
+      ],
+      category: "development"
+    },
     {
       title: "Julia 贪吃蛇游戏",
       link: "https://github.com/KTisKIM/csci_6221",
