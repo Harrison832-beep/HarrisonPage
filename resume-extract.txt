@@ -1,0 +1,93 @@
+                                            
+
+   | Python | AI  | wharrison832@gmail.com +86 17389794618
+  www.linkedin.com/in/qicheng-chen | https://harrison832-beep.github.io/HarrisonPage/
+
+                                                  
+                                                            2023. 08 ­ 2025. 09
+-School of Engineering and Applied Science
+GPA3.61/4.0
+
+ HCII 2025 SpringerLLM                                                                           
+                                                                                       2018. 09 ­ 2022. 07
+GPA: 3.53/4.0
+
+2021 ""
+
+ Sensors 2023 DOI: 10.3390/s23136099
+
+                                                                                                
+                                                                                       2021.06 - 2022.10
+KinevizGraphXR 
+/  
+
+  GraphXR  Groove  JavaScriptES6 Modules + ObservableHQ SnowflakeNebula Graph 
+
+ Web API  NoSQL / SQL  GraphXR 
+
+  GraphXR  Neo4j  GraphXR  15+ 
+
+
+
+  HTML/CSS/JavaScript + Ghost + Docker  Kineviz 
+
+
+
+ React + FastAPI  AI  PDF                                                              2026.03 ­ 
+
+
+  React+FastAPI  PDF / CSV / Excel AI 
+
+  Ollama  Llama3embedding LangGraph 
+
+Amazon-M2                                                                                 
+                                                                                       2024.09 ­ 2024.12
+
+  OpenAI  Google Cloud API  ChatGPT4o-miniGemini-1.0-proGemini-1.5-flash  Amazon-M2 
+
+ MRR@100  0.6787Recall@100  0.9478 20%
+
+  OpenAI text-embedding-3-small  Lasso RegressionSVRLinear Regression  CNN
+
+Transformer  MRR@100 0.0106
+
+  HCII 2025  Springer LNCS  Human Interface and the Management of Information2025 
+
+                                                                                               
+                                                                                       2022.06 - 2023.05
+
+  30  Android Studio  Kotlin  Polar Verity Sense  NeuroSky  PPG
+
+ECGEEG 
+
+  PythonNumPy / Pandas
+
+  PyTorch  StressNeXtLRCNSelf-supervised CNN 
+        Accuracy 95.2%F1-score 95.0%
+
+VR                                                                                                
+                                                                                       2021. 09­2022. 04
+
+  UE4 
+
+ 
+
+  UI
+
+  15000  VR 
+
+Django                                                                                           
+Python 3                                                                               2020. 10 ­ 2021. 05
+
+  UML + Visual Paradigm GUI  API 
+
+  Python + Django + Git RESTful API
+
+  NLP  Linux IIS + Ubuntu
+
+/
+
+  102
+ PythonJavaScriptSQLC/C++UE4 BlueprintJava
+ PyTorchLLM Ollama/GPT/GeminiRAGLangChain/LangGraph | DjangoREST API | DockerLinuxGit
+

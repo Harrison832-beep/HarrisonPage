@@ -32,13 +32,23 @@ export const resumeData = {
   ],
   internships: [
     {
+      company: "独立开发项目",
+      location: "个人项目",
+      position: "LLM 应用开发（React + FastAPI）",
+      period: "2026.03 - 至今",
+      responsibilities: [
+        "使用 React 与 FastAPI 开发 AI PDF 应用，支持 PDF、CSV、Excel 等多类型文件的智能处理与问答交互。",
+        "基于 Ollama、Llama 3、Embedding 与 LangGraph 搭建大模型工作流，完善本地推理、检索增强与多步骤编排能力。"
+      ]
+    },
+    {
       company: "Kineviz",
       location: "中国，宁波",
       position: "Node.js 开发",
       period: "2021.06 - 2022.10",
       responsibilities: [
-        "使用 Node.js 编写 NGQL、SQL 语句理解还有 JavaScript 编码 GUI 让 GraphXR 用户能将 Snowflake 和 Nebula Graph 数据导入到 GraphXR 中。",
-        "使用 HTML、CSS、Ghost、JavaScript 和 Docker 开发了 Kineviz 中国办公室的初版网站，使员工能够发布博客介绍 GraphXR 案例研究。"
+        "使用 Node.js 实现 NGQL / SQL 查询解析与配套 JavaScript GUI 功能，支持 GraphXR 用户将 Snowflake 与 Nebula Graph 数据导入平台。",
+        "使用 HTML、CSS、Ghost、JavaScript 和 Docker 搭建 Kineviz 中国办公室初版官网，支持团队发布博客内容并展示 GraphXR 案例研究。"
       ]
     }
   ],

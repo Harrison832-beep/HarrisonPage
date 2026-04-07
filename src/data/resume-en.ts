@@ -32,13 +32,23 @@ export const resumeDataEn = {
   ],
   internships: [
     {
+      company: "Independent Project",
+      location: "Personal Project",
+      position: "LLM Application Developer (React + FastAPI)",
+      period: "March 2026 - Present",
+      responsibilities: [
+        "Built an AI PDF application with React and FastAPI, supporting intelligent processing and question answering over PDF, CSV, and Excel files",
+        "Implemented an LLM workflow with Ollama, Llama 3, embeddings, and LangGraph to support local inference, retrieval-augmented generation, and multi-step orchestration"
+      ]
+    },
+    {
       company: "Kineviz",
       location: "Ningbo Zhejiang",
       position: "Node.js Developer",
       period: "June 2021 - October 2022",
       responsibilities: [
-        "Used Node.js to parse NGQL and SQL queries and JavaScript code to implement GUI to allow users to import data from Snowflake analytics platform and Nebula Graph into GraphXR",
-        "Developed China Kineviz Office preliminary website by using HTML, CSS, Ghost, JavaScript, and Docker, enabled staff blog posting to introduce GraphXR case studies"
+        "Built Node.js-based NGQL and SQL parsing plus supporting JavaScript GUI workflows, enabling GraphXR users to import data from Snowflake and Nebula Graph into the platform",
+        "Developed the initial Kineviz China website with HTML, CSS, Ghost, JavaScript, and Docker, enabling the team to publish blog content and showcase GraphXR case studies"
       ]
     }
   ],
