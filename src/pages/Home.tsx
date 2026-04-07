@@ -73,19 +73,29 @@ export default function Home() {
     ? currentResumeData.projects 
     : currentResumeData.projects.filter(project => project.category === activeCategory);
 
+  const panelClassName = "glass-panel glass-panel-hover rounded-[28px] border border-white/40 p-6";
+
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 text-gray-800 dark:text-gray-200 font-sans">
+    <div className="relative min-h-screen overflow-x-hidden bg-transparent text-slate-800 font-sans">
+      <div className="pointer-events-none absolute inset-x-0 top-0 -z-10 h-[34rem] bg-[radial-gradient(circle_at_top,rgba(20,88,214,0.16),transparent_42%),radial-gradient(circle_at_20%_20%,rgba(242,157,56,0.18),transparent_20%),radial-gradient(circle_at_82%_12%,rgba(44,166,164,0.16),transparent_22%)]" />
+      <div className="pointer-events-none absolute left-[-7rem] top-[24rem] -z-10 h-72 w-72 rounded-full bg-amber-200/20 blur-3xl" />
+      <div className="pointer-events-none absolute right-[-8rem] top-[40rem] -z-10 h-80 w-80 rounded-full bg-sky-300/20 blur-3xl" />
       {/* 导航栏 */}
   <header className={cn(
     "fixed top-0 left-0 right-0 z-50 transition-all duration-300",
-    scrolled ? "bg-white/90 dark:bg-gray-900/90 backdrop-blur-sm shadow-sm py-2" : "bg-transparent py-4"
+    scrolled ? "py-3" : "py-5"
   )}>
     <div className="container mx-auto px-4 md:px-6">
-      <div className="flex justify-between items-center">
+      <div className={cn(
+        "flex justify-between items-center rounded-full border px-3 py-2 md:px-5",
+        scrolled
+          ? "glass-panel border-white/50 shadow-[0_12px_40px_rgba(23,37,84,0.14)]"
+          : "border-white/30 bg-white/45 backdrop-blur-md"
+      )}>
         {/* 语言切换按钮 */}
         <button
           onClick={toggleLanguage}
-          className="px-4 py-2 rounded-full bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors text-sm font-medium"
+          className="rounded-full bg-slate-900 px-4 py-2 text-sm font-medium text-white transition hover:-translate-y-0.5 hover:bg-slate-700"
         >
           {language === 'zh' ? 'English' : '中文'}
         </button>
@@ -97,7 +107,7 @@ export default function Home() {
               <li key={item}>
                 <a 
                   href={`#${item}`} 
-                  className="inline-block px-3 py-2 rounded-full transition-colors hover:bg-gray-100 dark:hover:bg-gray-800"
+                  className="inline-block rounded-full px-3 py-2 text-slate-700 transition-colors hover:bg-white/70 hover:text-slate-950"
                 >
                   {translations.nav[item as keyof typeof translations.nav][language]}
                 </a>
@@ -109,56 +119,58 @@ export default function Home() {
     </div>
   </header>
 
-      <main className="container mx-auto px-4 md:px-6 pt-28 pb-20">
+      <main className="container mx-auto px-4 md:px-6 pt-32 pb-24">
         {/* 个人信息头部 */}
-        <section id="about" className="mb-20 text-center">
+        <section id="about" className="mb-24 text-center">
+          <div className="glass-panel mx-auto rounded-[36px] border border-white/50 px-6 py-10 shadow-[0_30px_90px_rgba(22,47,84,0.12)] md:max-w-5xl md:px-12">
            <div className="relative inline-block mb-6">
            <img 
   src="https://lf-code-agent.coze.cn/obj/x-ai-cn/255345043714/attachment/2304d15d2777c8c920260d702845c547_20250912234233.jpg" 
   alt="陈起成头像" 
-  className="w-64 h-48 md:w-96 md:h-72 rounded-xl object-cover border-4 border-white dark:border-gray-900 shadow-lg"
+  className="w-64 h-48 md:w-96 md:h-72 rounded-[24px] object-cover border-4 border-white shadow-2xl"
 />
-            <div className="absolute -bottom-2 -right-2 bg-green-500 rounded-full w-10 h-10 flex items-center justify-center border-4 border-white dark:border-gray-900">
+            <div className="absolute -bottom-2 -right-2 bg-green-500 rounded-full w-10 h-10 flex items-center justify-center border-4 border-white">
               <i className="fa-solid fa-check text-white"></i>
             </div>
           </div>
           
-             <h1 className="text-4xl md:text-4xl lg:text-5xl font-bold mb-4 pb-4 bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
+             <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-4 pb-4 bg-[var(--hero-grad)] bg-clip-text text-transparent">
                {currentResumeData.name}
              </h1>
           
-            <div className="text-lg text-gray-600 dark:text-gray-400 mb-6 max-w-2xl mx-auto">
+            <div className="text-lg text-slate-600 mb-6 max-w-2xl mx-auto">
               <p>{currentResumeData.career}</p>
             </div>
           
           <div className="flex flex-wrap justify-center gap-4 mb-8 text-sm">
-            <a href={`mailto:${resumeData.contact.email}`} className="flex items-center gap-2 px-4 py-2 rounded-full bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors">
+            <a href={`mailto:${resumeData.contact.email}`} className="section-chip flex items-center gap-2 px-4 py-2 rounded-full text-slate-700 transition-all hover:-translate-y-0.5 hover:bg-white/80">
               <i className="fa-regular fa-envelope"></i>
               <span>{resumeData.contact.email}</span>
             </a>
-            <a href={`tel:${resumeData.contact.phone}`} className="flex items-center gap-2 px-4 py-2 rounded-full bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors">
+            <a href={`tel:${resumeData.contact.phone}`} className="section-chip flex items-center gap-2 px-4 py-2 rounded-full text-slate-700 transition-all hover:-translate-y-0.5 hover:bg-white/80">
               <i className="fa-solid fa-phone"></i>
               <span>{resumeData.contact.phone}</span>
             </a>
-              <a href={resumeData.contact.linkedin} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 px-4 py-2 rounded-full bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors">
+              <a href={resumeData.contact.linkedin} target="_blank" rel="noopener noreferrer" className="section-chip flex items-center gap-2 px-4 py-2 rounded-full text-slate-700 transition-all hover:-translate-y-0.5 hover:bg-white/80">
                 <i className="fa-brands fa-linkedin"></i>
                 <span>LinkedIn</span>
               </a>
-               <a href="https://github.com/Harrison832-Beep" target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 px-4 py-2 rounded-full bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors">
+               <a href="https://github.com/Harrison832-Beep" target="_blank" rel="noopener noreferrer" className="section-chip flex items-center gap-2 px-4 py-2 rounded-full text-slate-700 transition-all hover:-translate-y-0.5 hover:bg-white/80">
                 <i className="fa-brands fa-github text-xl"></i>
                 <span>GitHub</span>
               </a>
             </div>
           
-           <div className="max-w-3xl mx-auto bg-white dark:bg-gray-800 rounded-xl shadow-sm p-6 md:p-8 border border-gray-100 dark:border-gray-700">
+           <div className="max-w-3xl mx-auto rounded-[28px] border border-white/50 bg-white/60 p-6 md:p-8 shadow-[0_18px_60px_rgba(29,55,88,0.1)] backdrop-blur-md">
             <h2 className="text-xl font-semibold mb-4 flex items-center">
               <i className="fa-solid fa-user-circle mr-2 text-blue-500"></i>{translations.sections.aboutMe[language]}
             </h2>
-             <p className="text-gray-700 dark:text-gray-300 leading-relaxed">
+             <p className="text-slate-700 leading-relaxed">
  {language === 'zh' 
    ? '我是一名毕业于美国乔治华盛顿大学的硕士，本科就读于宁波诺丁汉大学，本科和硕士都是计算机科学专业，目前正在上海寻找工作机会。我的研究兴趣包括深度学习、计算机视觉和自然语言处理，特别是深度学习在智慧设备或穿戴设备中的应用。同时我也感兴趣程序架构设计、重构、再开发等。在深度学习领域发表过两篇论文，有一次从0到1从设计到使用Python和Django开发、测试微信小程序后端的经历。' 
    : 'I am a master\'s graduate from The George Washington University with a Bachelor\'s degree from the University of Nottingham Ningbo China, both in Computer Science. I am currently seeking job opportunities in Shanghai. My research interests include deep learning, computer vision, and natural language processing, particularly the application of deep learning in smart devices or wearable devices. I am also interested in software development, software architecture, and software refactoring. I have published two papers in the field of deep learning and have experience developing and testing a WeChat mini-program backend from scratch using Python and Django.'}
             </p>
+          </div>
           </div>
         </section>
         
@@ -173,7 +185,7 @@ export default function Home() {
           
           <div className="space-y-6">
             {currentResumeData.education.map((edu, index) => (
-              <div key={index} className="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-6 border border-gray-100 dark:border-gray-700 hover:shadow-md transition-shadow">
+              <div key={index} className={panelClassName}>
                 <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-2">
                   <h3 className="text-xl font-semibold">{edu.degree}</h3>
                   <span className="text-sm text-gray-500 dark:text-gray-400 mt-1 md:mt-0">{edu.period}</span>
@@ -224,7 +236,7 @@ export default function Home() {
           
           <div className="space-y-6">
              {currentResumeData.internships.map((internship, index) => (
-              <div key={index} className="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-6 border border-gray-100 dark:border-gray-700 hover:shadow-md transition-shadow">
+              <div key={index} className={panelClassName}>
                 <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-2">
                   <h3 className="text-xl font-semibold">{internship.position}</h3>
                   <span className="text-sm text-gray-500 dark:text-gray-400 mt-1 md:mt-0">{internship.period}</span>
@@ -263,10 +275,10 @@ export default function Home() {
             <button
               onClick={() => setActiveCategory('all')}
               className={cn(
-                "px-4 py-2 rounded-full text-sm font-medium transition-colors",
+                "section-chip px-4 py-2 rounded-full text-sm font-medium transition-all hover:-translate-y-0.5",
                 activeCategory === 'all' 
                   ? "bg-purple-600 text-white" 
-                  : "bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700"
+                  : "bg-white/55 text-slate-700 hover:bg-white/85"
               )}
             >
               {translations.buttons.allProjects[language]}
@@ -274,10 +286,10 @@ export default function Home() {
             <button
               onClick={() => setActiveCategory('development')}
               className={cn(
-                "px-4 py-2 rounded-full text-sm font-medium transition-colors",
+                "section-chip px-4 py-2 rounded-full text-sm font-medium transition-all hover:-translate-y-0.5",
                 activeCategory === 'development' 
                   ? "bg-blue-600 text-white" 
-                  : "bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700"
+                  : "bg-white/55 text-slate-700 hover:bg-white/85"
               )}
             >
               {translations.buttons.devProjects[language]}
@@ -285,10 +297,10 @@ export default function Home() {
             <button
               onClick={() => setActiveCategory('machine-learning')}
               className={cn(
-                "px-4 py-2 rounded-full text-sm font-medium transition-colors",
+                "section-chip px-4 py-2 rounded-full text-sm font-medium transition-all hover:-translate-y-0.5",
                 activeCategory === 'machine-learning' 
                   ? "bg-green-600 text-white" 
-                  : "bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700"
+                  : "bg-white/55 text-slate-700 hover:bg-white/85"
               )}
             >
               {translations.buttons.mlProjects[language]}
@@ -300,7 +312,7 @@ export default function Home() {
             {filteredProjects.map((project, index) => (
               <div 
                 key={index} 
-                className="bg-white dark:bg-gray-800 rounded-xl shadow-sm overflow-hidden border border-gray-100 dark:border-gray-700 hover:shadow-md transition-all duration-300 hover:-translate-y-1"
+                className="glass-panel glass-panel-hover rounded-[28px] overflow-hidden border border-white/40 transition-all duration-300"
               >
                 <div className="p-6">
                   <div className="flex justify-between items-start mb-2">
@@ -376,7 +388,7 @@ export default function Home() {
           
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {/* 语言技能 */}
-            <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-6 border border-gray-100 dark:border-gray-700">
+            <div className={panelClassName}>
               <h3 className="text-lg font-semibold mb-4 flex items-center">
                 <i className="fa-solid fa-language text-purple-500 mr-2"></i>
                 {translations.sections.languageSkills[language]}
@@ -392,7 +404,7 @@ export default function Home() {
             </div>
             
             {/* 编程语言 */}
-            <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-6 border border-gray-100 dark:border-gray-700">
+            <div className={panelClassName}>
               <h3 className="text-lg font-semibold mb-4 flex items-center">
                 <i className="fa-solid fa-code text-blue-500 mr-2"></i>
                 {translations.sections.programmingLanguages[language]}
@@ -410,7 +422,7 @@ export default function Home() {
             </div>
             
             {/* 技术能力 */}
-            <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-6 border border-gray-100 dark:border-gray-700">
+            <div className={panelClassName}>
               <h3 className="text-lg font-semibold mb-4 flex items-center">
                 <i className="fa-solid fa-microchip text-green-500 mr-2"></i>
                 {translations.sections.technicalSkills[language]}
@@ -440,7 +452,7 @@ export default function Home() {
           
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {/* 论文发表 */}
-            <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-6 border border-gray-100 dark:border-gray-700">
+            <div className={panelClassName}>
               <h3 className="text-lg font-semibold mb-4 flex items-center">
                 <i className="fa-solid fa-book text-blue-500 mr-2"></i>
                 {translations.sections.publicationsSection[language]}
@@ -465,7 +477,7 @@ export default function Home() {
             </div>
             
             {/* 奖项 */}
-            <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-6 border border-gray-100 dark:border-gray-700">
+            <div className={panelClassName}>
               <h3 className="text-lg font-semibold mb-4 flex items-center">
                 <i className="fa-solid fa-award text-yellow-500 mr-2"></i>
                 {translations.sections.awards[language]}
