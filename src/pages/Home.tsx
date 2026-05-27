@@ -1,524 +1,466 @@
-import React, { useState, useEffect, useCallback, useContext } from 'react';
-import { resumeData } from '@/data/resume';
-import { resumeDataEn } from '@/data/resume-en';
-import { cn } from '@/lib/utils';
-import { LanguageContext } from '@/contexts/languageContext.tsx';
+import { useMemo, useState } from "react";
 
-// 个人主页组件
+type TrackId = "all" | "ai" | "android" | "vr";
+
+type ProjectLink = {
+  label: string;
+  href: string;
+  kind: "Demo" | "Code" | "Paper" | "Resume" | "Video";
+};
+
+type Project = {
+  title: string;
+  track: Exclude<TrackId, "all">;
+  role: string;
+  period: string;
+  summary: string;
+  stack: string[];
+  image?: string;
+  imageAlt?: string;
+  demoState: string;
+  highlights: string[];
+  links: ProjectLink[];
+};
+
+const base = import.meta.env.BASE_URL;
+const asset = (path: string) => `${base}${path.replace(/^\//, "")}`;
+
+const tracks: { id: TrackId; label: string; headline: string; description: string }[] = [
+  {
+    id: "all",
+    label: "All Work",
+    headline: "One portfolio, three role stories.",
+    description:
+      "A single GitHub Pages site works better than three separate sites: recruiters get one URL, while filters and PDF resumes change the story for each role.",
+  },
+  {
+    id: "ai",
+    label: "AI Full-stack",
+    headline: "AI applications, RAG systems and published ML research.",
+    description:
+      "React/FastAPI projects, LLM workflows, recommendation experiments and first-author research papers.",
+  },
+  {
+    id: "android",
+    label: "Android",
+    headline: "Native Android apps, media playback and BLE data collection.",
+    description:
+      "Java/Kotlin Android work covering Activity, Service, ContentProvider, RecyclerView, MediaPlayer, permissions and sensor data capture.",
+  },
+  {
+    id: "vr",
+    label: "Game / VR",
+    headline: "UE4 VR interaction and data-driven simulation systems.",
+    description:
+      "Gameplay logic, VR interaction modes, truck task systems, Blueprint refactoring and real-world data driven simulation.",
+  },
+];
+
+const resumes = [
+  {
+    title: "AI Full-stack Resume",
+    href: asset("resumes/qicheng-chen-ai-fullstack.pdf"),
+    tag: "React / FastAPI / LLM",
+    fit: "For AI application development, Python backend, RAG and data/ML-adjacent full-stack roles.",
+  },
+  {
+    title: "Android Resume",
+    href: asset("resumes/qicheng-chen-android.pdf"),
+    tag: "Java / Kotlin / Android SDK",
+    fit: "For Android, client-side development, mobile app and sensor data collection roles.",
+  },
+  {
+    title: "Game / VR Resume",
+    href: asset("resumes/qicheng-chen-game-vr.pdf"),
+    tag: "UE4 / Blueprint / VR",
+    fit: "For UE4, VR interaction, gameplay programming and simulation development roles.",
+  },
+];
+
+const projects: Project[] = [
+  {
+    title: "AI Document Q&A System",
+    track: "ai",
+    role: "Independent full-stack developer",
+    period: "2026",
+    summary:
+      "A React + FastAPI AI application that parses uploaded files, builds temporary retrieval indexes and answers questions through an LLM/RAG workflow.",
+    stack: ["React", "FastAPI", "LangGraph", "LangChain", "Kimi API", "Ollama", "RAG"],
+    demoState: "Needs a 60-90s screen recording: upload a file, ask a question, show retrieval and answer generation.",
+    highlights: [
+      "Supports PDF, CSV, Excel, TXT and Markdown parsing with chunking and temporary vector search.",
+      "Uses Ollama embeddings and LangChain InMemoryVectorStore for top-k retrieval.",
+      "LangGraph decides whether to call retrieval before generating the final answer through Kimi API.",
+      "FastAPI provides API routes and serves the React build for a local one-command demo.",
+    ],
+    links: [
+      { label: "AI resume", href: asset("resumes/qicheng-chen-ai-fullstack.pdf"), kind: "Resume" },
+      { label: "Demo slot", href: "#demo-framework", kind: "Demo" },
+    ],
+  },
+  {
+    title: "UE4 Port Logistics VR Simulation",
+    track: "vr",
+    role: "UE4 / VR gameplay developer",
+    period: "2021-2022",
+    summary:
+      "A port logistics VR simulation extended from an existing UE4 base system with truck gameplay, task management and data-driven container transport flows.",
+    stack: ["Unreal Engine 4", "Blueprint", "VR", "Gameplay", "Flask", "MySQL"],
+    image: asset("media/vr-port.png"),
+    imageAlt: "UE4 port logistics VR simulation with cranes, containers and trucks",
+    demoState: "Best first video to add: 30-60s gameplay cut showing truck task, crane coordination, VR interaction and score feedback.",
+    highlights: [
+      "Implemented truck driving logic including path following, acceleration, deceleration, turning and arrival detection.",
+      "Added Mg_Auto task management to coordinate trucks, cranes and Terminal <-> Yard transport.",
+      "Designed task prompts, timer, scoring, navigation path and skip/reset flow for player-controlled truck tasks.",
+      "Processed real port history data and mapped container positions into simulation task generation.",
+    ],
+    links: [
+      { label: "Game / VR resume", href: asset("resumes/qicheng-chen-game-vr.pdf"), kind: "Resume" },
+      { label: "Video slot", href: "#demo-framework", kind: "Video" },
+    ],
+  },
+  {
+    title: "Android Recipe Book",
+    track: "android",
+    role: "Independent Android developer",
+    period: "2022",
+    summary:
+      "A native Android recipe manager with local persistence, multi-Activity flows, dynamic recipe forms, image selection and cooking video playback.",
+    stack: ["Java", "Android SDK", "SQLite", "ContentProvider", "RecyclerView", "VideoView"],
+    image: asset("media/recipe-book.jpg"),
+    imageAlt: "Android Recipe Book app screenshot",
+    demoState: "Add a short phone recording: create recipe, choose image/video, rate recipe and delete from the list.",
+    highlights: [
+      "SQLite + ContentProvider storage layer accessed through ContentResolver for CRUD operations.",
+      "RecyclerView + Adapter renders recipe cards with rating, image preview, deletion and detail navigation.",
+      "Dynamic ingredient form collects variable-length fields and stores structured recipe content.",
+      "Handles image/video URI selection and Android 13 media read permissions.",
+    ],
+    links: [
+      { label: "Android resume", href: asset("resumes/qicheng-chen-android.pdf"), kind: "Resume" },
+      { label: "Demo slot", href: "#demo-framework", kind: "Demo" },
+    ],
+  },
+  {
+    title: "Android Music Player",
+    track: "android",
+    role: "Independent Android developer",
+    period: "2022",
+    summary:
+      "A native Android MP3 player with foreground playback, Activity-Service messaging, notification entry and playback progress synchronization.",
+    stack: ["Java", "Android SDK", "MediaPlayer", "Foreground Service", "Messenger"],
+    image: asset("media/music-player.jpg"),
+    imageAlt: "Android Music Player app screenshot",
+    demoState: "Add a phone recording: select local MP3, background the app, reopen from notification and seek progress.",
+    highlights: [
+      "Foreground Service carries playback so music can continue after the Activity is backgrounded.",
+      "Messenger handles play, pause, stop, duration sync, progress updates and current-song messages.",
+      "Supports ACTION_VIEW implicit intents and Android 13 READ_MEDIA_AUDIO / notification permissions.",
+      "Includes a settings screen with color picker and result callback to update the main UI.",
+    ],
+    links: [
+      { label: "Android resume", href: asset("resumes/qicheng-chen-android.pdf"), kind: "Resume" },
+      { label: "Demo slot", href: "#demo-framework", kind: "Demo" },
+    ],
+  },
+  {
+    title: "Wearable Stress Recognition Study",
+    track: "android",
+    role: "First author / mobile data collection developer",
+    period: "2022-2023",
+    summary:
+      "A first-author Sensors paper using wearable PPG, ECG and EEG signals collected from university students for stress recognition.",
+    stack: ["Kotlin", "Polar BLE SDK", "Python", "PyTorch", "PPG", "ECG", "EEG"],
+    image: asset("media/polar-ble.png"),
+    imageAlt: "Polar BLE data collection screenshot",
+    demoState: "For the portfolio, show Polar BLE data collection plus one chart of filtered PPG/ECG/EEG signals.",
+    highlights: [
+      "Modified Polar BLE Android/Kotlin callbacks to record timestamped PPG data from Polar Verity Sense.",
+      "Collected data from 30 participants and organized self-reported stress labels.",
+      "Built preprocessing with resampling, Butterworth filtering, segmentation and normalization.",
+      "Compared CNN, Attention-LRCN, Self-Supervised CNN and StressNeXt models.",
+    ],
+    links: [
+      { label: "Paper", href: "https://doi.org/10.3390/s23136099", kind: "Paper" },
+      { label: "Android resume", href: asset("resumes/qicheng-chen-android.pdf"), kind: "Resume" },
+    ],
+  },
+  {
+    title: "Amazon-M2 Multilingual Recommendation",
+    track: "ai",
+    role: "Independent researcher",
+    period: "2024-2025",
+    summary:
+      "A first-author HCII 2025 Springer LNCS paper on next-item recommendation with LLMs, embeddings and session-based product data.",
+    stack: ["Python", "OpenAI API", "Gemini API", "Embeddings", "scikit-learn", "PyTorch"],
+    demoState: "Add one result table image and a compact pipeline diagram from session data to top-k recommendation.",
+    highlights: [
+      "Converted session-based recommendation into next-item embedding prediction and top-k item recall.",
+      "Compared Lasso, SVR, CNN, Transformer, GPT-4o-mini and Gemini approaches.",
+      "Reached MRR@100 0.6787 and Recall@100 0.9478 in experiments.",
+      "Published as first-author work in HCII 2025 Springer LNCS.",
+    ],
+    links: [
+      { label: "Paper", href: "https://doi.org/10.1007/978-3-031-93828-3_13", kind: "Paper" },
+      { label: "AI resume", href: asset("resumes/qicheng-chen-ai-fullstack.pdf"), kind: "Resume" },
+    ],
+  },
+  {
+    title: "GraphXR Data Source Integration",
+    track: "ai",
+    role: "Data visualization development intern",
+    period: "2021-2022",
+    summary:
+      "Interactive Grove notebook demos that import Snowflake and Nebula Graph data into GraphXR for graph exploration and visual analysis.",
+    stack: ["JavaScript", "GraphXR API", "Snowflake", "Nebula Graph", "HTML", "CSS"],
+    image: asset("media/vr-task-system.png"),
+    imageAlt: "Graph-style data visualization screenshot",
+    demoState: "Add a screenshot or GIF of the Grove notebook importing data into the GraphXR canvas.",
+    highlights: [
+      "Built input panels for connection parameters, graph spaces, categories and custom queries.",
+      "Parsed vertices, edges and attributes into GraphXR-compatible node and relationship structures.",
+      "Created graph nodes and edges on the visual canvas through GraphXR APIs.",
+      "Also supported the temporary company website with HTML/CSS/JavaScript and Ghost.",
+    ],
+    links: [
+      { label: "AI resume", href: asset("resumes/qicheng-chen-ai-fullstack.pdf"), kind: "Resume" },
+    ],
+  },
+  {
+    title: "Smart Campus Chatbot Mini Program Backend",
+    track: "android",
+    role: "Backend developer in a 6-person team",
+    period: "2020-2021",
+    summary:
+      "A WeChat mini program backend for campus information chat, user settings, chat history and bot-generated responses.",
+    stack: ["Python", "Django", "SQLite", "REST API", "ChatterBot", "WeChat Mini Program"],
+    demoState: "If kept on the site, add one screenshot of the chat page and one API diagram for the backend.",
+    highlights: [
+      "Implemented chat-message saving, full history fetch, date search and clear-history endpoints.",
+      "Designed User and Chat models and serialized messages back to the mini program frontend.",
+      "Integrated ChatterBot response generation and stored bot replies with user messages.",
+    ],
+    links: [
+      { label: "Android resume", href: asset("resumes/qicheng-chen-android.pdf"), kind: "Resume" },
+    ],
+  },
+];
+
+const proofItems = [
+  {
+    title: "Video",
+    text: "Short clips should prove the project in under one minute: run the app, show the key workflow, then show the result.",
+  },
+  {
+    title: "Screenshot",
+    text: "Use screenshots for UI states, model outputs, GraphXR canvas views, UE4 tasks and Android screens.",
+  },
+  {
+    title: "Write-up",
+    text: "Each project can have a short page later: problem, role, architecture, hard part, result and what you would improve.",
+  },
+  {
+    title: "Link",
+    text: "Prefer stable links: PDF resumes, published papers, GitHub repositories, hosted demos and unlisted video URLs.",
+  },
+];
+
 export default function Home() {
-  const context = useContext(LanguageContext);
-  if (!context) {
-    throw new Error('Home must be used within a LanguageProvider');
-  }
-  const { language, toggleLanguage } = context;
-  const [activeCategory, setActiveCategory] = useState('all');
-  const [scrolled, setScrolled] = useState(false);
-  const [expandedProjects, setExpandedProjects] = useState<Record<number, boolean>>({});
-  
-  // 根据当前语言选择简历数据
-  const currentResumeData = language === 'zh' ? resumeData : resumeDataEn;
-  
-  // 导航栏和静态文本的翻译映射
-  const translations = {
-    nav: {
-      about: { zh: '关于我', en: 'About' },
-      education: { zh: '教育背景', en: 'Education' },
-      experience: { zh: '实习经历', en: 'Experience' },
-      projects: { zh: '项目经验', en: 'Projects' },
-      skills: { zh: '技能', en: 'Skills' },
-      publications: { zh: '发表与奖项', en: 'Publications & Awards' }
-    },
-    buttons: {
-      viewMore: { zh: '查看更多', en: 'View More' },
-      showLess: { zh: '收起', en: 'Show Less' },
-      allProjects: { zh: '所有项目', en: 'All Projects' },
-      devProjects: { zh: '开发项目', en: 'Development' },
-      mlProjects: { zh: '机器学习项目', en: 'Machine Learning' }
-    },
-    sections: {
-      aboutMe: { zh: '关于我', en: 'About Me' },
-      education: { zh: '教育背景', en: 'Education' },
-      experience: { zh: '实习经历', en: 'Internship Experience' },
-      projects: { zh: '项目经验', en: 'Projects' },
-      skills: { zh: '技能专长', en: 'Skills' },
-      publications: { zh: '发表与奖项', en: 'Publications & Awards' },
-      languageSkills: { zh: '语言技能', en: 'Languages' },
-      programmingLanguages: { zh: '编程语言', en: 'Programming Languages' },
-      technicalSkills: { zh: '技术能力', en: 'Technical Skills' },
-      publicationsSection: { zh: '论文发表', en: 'Publications' },
-      awards: { zh: '获得奖项', en: 'Awards' }
-    }
-  };
-  
-  // 监听滚动事件，用于导航栏样式变化
-  useEffect(() => {
-    const handleScroll = () => {
-      setScrolled(window.scrollY > 50);
-    };
-    
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
+  const [activeTrack, setActiveTrack] = useState<TrackId>("all");
+  const currentTrack = tracks.find((track) => track.id === activeTrack) ?? tracks[0];
 
-  // 切换项目展开/折叠状态
-  const toggleProjectExpand = useCallback((index: number) => {
-    setExpandedProjects(prev => ({
-      ...prev,
-      [index]: !prev[index]
-    }));
-  }, []);
-  
-  // 根据选择的类别筛选项目
-  const filteredProjects = activeCategory === 'all' 
-    ? currentResumeData.projects 
-    : currentResumeData.projects.filter(project => project.category === activeCategory);
-
-  const panelClassName = "glass-panel glass-panel-hover rounded-[28px] border border-white/40 p-6";
+  const visibleProjects = useMemo(() => {
+    if (activeTrack === "all") return projects;
+    return projects.filter((project) => project.track === activeTrack);
+  }, [activeTrack]);
 
   return (
-    <div className="relative min-h-screen overflow-x-hidden bg-transparent text-slate-800 font-sans">
-      <div className="pointer-events-none absolute inset-x-0 top-0 -z-10 h-[34rem] bg-[radial-gradient(circle_at_top,rgba(20,88,214,0.16),transparent_42%),radial-gradient(circle_at_20%_20%,rgba(242,157,56,0.18),transparent_20%),radial-gradient(circle_at_82%_12%,rgba(44,166,164,0.16),transparent_22%)]" />
-      <div className="pointer-events-none absolute left-[-7rem] top-[24rem] -z-10 h-72 w-72 rounded-full bg-amber-200/20 blur-3xl" />
-      <div className="pointer-events-none absolute right-[-8rem] top-[40rem] -z-10 h-80 w-80 rounded-full bg-sky-300/20 blur-3xl" />
-      {/* 导航栏 */}
-  <header className={cn(
-    "fixed top-0 left-0 right-0 z-50 transition-all duration-300",
-    scrolled ? "py-3" : "py-5"
-  )}>
-    <div className="container mx-auto px-4 md:px-6">
-      <div className={cn(
-        "flex justify-between items-center rounded-full border px-3 py-2 md:px-5",
-        scrolled
-          ? "glass-panel border-white/50 shadow-[0_12px_40px_rgba(23,37,84,0.14)]"
-          : "border-white/30 bg-white/45 backdrop-blur-md"
-      )}>
-        {/* 语言切换按钮 */}
-        <button
-          onClick={toggleLanguage}
-          className="rounded-full bg-slate-900 px-4 py-2 text-sm font-medium text-white transition hover:-translate-y-0.5 hover:bg-slate-700"
-        >
-          {language === 'zh' ? 'English' : '中文'}
-        </button>
-        
-        {/* 导航菜单 */}
-        <nav>
-          <ul className="flex space-x-1 md:space-x-6 text-sm md:text-base">
-            {['about', 'education', 'experience', 'projects', 'skills', 'publications'].map((item) => (
-              <li key={item}>
-                <a 
-                  href={`#${item}`} 
-                  className="inline-block rounded-full px-3 py-2 text-slate-700 transition-colors hover:bg-white/70 hover:text-slate-950"
-                >
-                  {translations.nav[item as keyof typeof translations.nav][language]}
-                </a>
-              </li>
-            ))}
-          </ul>
-        </nav>
-      </div>
-    </div>
-  </header>
+    <main className="site-shell">
+      <nav className="top-nav">
+        <a href="#top" className="brand-link">
+          Qicheng Chen
+        </a>
+        <div className="nav-links" aria-label="Primary navigation">
+          <a href="#projects">Projects</a>
+          <a href="#resumes">Resumes</a>
+          <a href="#demo-framework">Demo Framework</a>
+          <a href="#contact">Contact</a>
+        </div>
+      </nav>
 
-      <main className="container mx-auto px-4 md:px-6 pt-32 pb-24">
-        {/* 个人信息头部 */}
-        <section id="about" className="mb-24 text-center">
-          <div className="glass-panel mx-auto rounded-[36px] border border-white/50 px-6 py-10 shadow-[0_30px_90px_rgba(22,47,84,0.12)] md:max-w-5xl md:px-12">
-           <div className="relative inline-block mb-6">
-           <img 
-  src="https://lf-code-agent.coze.cn/obj/x-ai-cn/255345043714/attachment/2304d15d2777c8c920260d702845c547_20250912234233.jpg" 
-  alt="陈起成头像" 
-  className="w-64 h-48 md:w-96 md:h-72 rounded-[24px] object-cover border-4 border-white shadow-2xl"
-/>
-            <div className="absolute -bottom-2 -right-2 bg-green-500 rounded-full w-10 h-10 flex items-center justify-center border-4 border-white">
-              <i className="fa-solid fa-check text-white"></i>
-            </div>
-          </div>
-          
-             <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-4 pb-4 bg-[var(--hero-grad)] bg-clip-text text-transparent">
-               {currentResumeData.name}
-             </h1>
-          
-            <div className="text-lg text-slate-600 mb-6 max-w-2xl mx-auto">
-              <p>{currentResumeData.career}</p>
-            </div>
-          
-          <div className="flex flex-wrap justify-center gap-4 mb-8 text-sm">
-            <a href={`mailto:${resumeData.contact.email}`} className="section-chip flex items-center gap-2 px-4 py-2 rounded-full text-slate-700 transition-all hover:-translate-y-0.5 hover:bg-white/80">
-              <i className="fa-regular fa-envelope"></i>
-              <span>{resumeData.contact.email}</span>
+      <section id="top" className="hero-section">
+        <div className="hero-copy">
+          <p className="eyebrow">Portfolio / Demo Hub</p>
+          <h1>AI applications, Android apps and VR simulation systems.</h1>
+          <p className="hero-lede">
+            Computer Science graduate with React/FastAPI AI projects, native Android work,
+            first-author research papers and UE4 VR interaction experience.
+          </p>
+          <div className="hero-actions">
+            <a className="primary-action" href="#projects">
+              View Projects
             </a>
-            <a href={`tel:${resumeData.contact.phone}`} className="section-chip flex items-center gap-2 px-4 py-2 rounded-full text-slate-700 transition-all hover:-translate-y-0.5 hover:bg-white/80">
-              <i className="fa-solid fa-phone"></i>
-              <span>{resumeData.contact.phone}</span>
+            <a className="secondary-action" href={asset("resumes/qicheng-chen-ai-fullstack.pdf")} target="_blank" rel="noreferrer">
+              AI Resume
             </a>
-              <a href={resumeData.contact.linkedin} target="_blank" rel="noopener noreferrer" className="section-chip flex items-center gap-2 px-4 py-2 rounded-full text-slate-700 transition-all hover:-translate-y-0.5 hover:bg-white/80">
-                <i className="fa-brands fa-linkedin"></i>
-                <span>LinkedIn</span>
-              </a>
-               <a href="https://github.com/Harrison832-Beep" target="_blank" rel="noopener noreferrer" className="section-chip flex items-center gap-2 px-4 py-2 rounded-full text-slate-700 transition-all hover:-translate-y-0.5 hover:bg-white/80">
-                <i className="fa-brands fa-github text-xl"></i>
-                <span>GitHub</span>
-              </a>
-            </div>
-          
-           <div className="max-w-3xl mx-auto rounded-[28px] border border-white/50 bg-white/60 p-6 md:p-8 shadow-[0_18px_60px_rgba(29,55,88,0.1)] backdrop-blur-md">
-            <h2 className="text-xl font-semibold mb-4 flex items-center">
-              <i className="fa-solid fa-user-circle mr-2 text-blue-500"></i>{translations.sections.aboutMe[language]}
-            </h2>
-             <p className="text-slate-700 leading-relaxed">
- {language === 'zh' 
-   ? '我是一名毕业于美国乔治华盛顿大学的硕士，本科就读于宁波诺丁汉大学，本科和硕士都是计算机科学专业，目前正在上海寻找工作机会。我的研究兴趣包括深度学习、计算机视觉和自然语言处理，特别是深度学习在智慧设备或穿戴设备中的应用。同时我也感兴趣程序架构设计、重构、再开发等。在深度学习领域发表过两篇论文，有一次从0到1从设计到使用Python和Django开发、测试微信小程序后端的经历。' 
-   : 'I am a master\'s graduate from The George Washington University with a Bachelor\'s degree from the University of Nottingham Ningbo China, both in Computer Science. I am currently seeking job opportunities in Shanghai. My research interests include deep learning, computer vision, and natural language processing, particularly the application of deep learning in smart devices or wearable devices. I am also interested in software development, software architecture, and software refactoring. I have published two papers in the field of deep learning and have experience developing and testing a WeChat mini-program backend from scratch using Python and Django.'}
-            </p>
+            <a className="secondary-action" href={asset("resumes/qicheng-chen-android.pdf")} target="_blank" rel="noreferrer">
+              Android Resume
+            </a>
+            <a className="secondary-action" href={asset("resumes/qicheng-chen-game-vr.pdf")} target="_blank" rel="noreferrer">
+              Game / VR Resume
+            </a>
           </div>
-          </div>
-        </section>
-        
-        {/* 教育背景 */}
-        <section id="education" className="mb-20">
-          <div className="flex items-center mb-6">
-            <div className="w-10 h-10 rounded-full bg-blue-100 dark:bg-blue-900 flex items-center justify-center mr-3">
-              <i className="fa-solid fa-graduation-cap text-blue-600 dark:text-blue-400"></i>
-            </div>
-            <h2 className="text-2xl md:text-3xl font-bold">{translations.sections.education[language]}</h2>
-          </div>
-          
-          <div className="space-y-6">
-            {currentResumeData.education.map((edu, index) => (
-              <div key={index} className={panelClassName}>
-                <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-2">
-                  <h3 className="text-xl font-semibold">{edu.degree}</h3>
-                  <span className="text-sm text-gray-500 dark:text-gray-400 mt-1 md:mt-0">{edu.period}</span>
-                </div>
-                <div className="flex items-center text-blue-600 dark:text-blue-400 font-medium mb-3">
-                  <i className="fa-solid fa-building mr-2"></i>
-                  <span>{edu.school}</span>
-                </div>
-                <div className="flex items-center text-gray-500 dark:text-gray-400 mb-4">
-                  <i className="fa-solid fa-map-marker-alt mr-2"></i>
-                  <span>{edu.location}</span>
-                </div>
-                <div className="flex items-center text-gray-500 dark:text-gray-400 mb-4">
-                  <i className="fa-solid fa-star mr-2"></i>
-                  <span>GPA: {edu.gpa}</span>
-                </div>
-                
-                {edu.projects && edu.projects.length > 0 && (
-                  <div className="mb-4">
-                    <h4 className="font-medium text-gray-900 dark:text-gray-100 mb-1">{language === 'zh' ? '独立项目:' : 'Independent Project:'}</h4>
-                    <p className="text-gray-700 dark:text-gray-300 text-sm">{edu.projects[0]}</p>
-                  </div>
-                )}
-                
-                {edu.publications && edu.publications.length > 0 && (
-                  <div>
-                    <h4 className="font-medium text-gray-900 dark:text-gray-100 mb-1">{language === 'zh' ? '论文发表:' : 'Publications:'}</h4>
-                    <ul className="list-disc list-inside text-gray-700 dark:text-gray-300 text-sm space-y-1">
-                      {edu.publications.map((pub, idx) => (
-                        <li key={idx}>{pub}</li>
-                      ))}
-                    </ul>
+        </div>
+        <figure className="hero-media">
+          <img src={asset("media/vr-port.png")} alt="UE4 VR port simulation screenshot" />
+          <figcaption>
+            <span>Featured Proof</span>
+            <strong>UE4 VR simulation demo material is ready to become the first video showcase.</strong>
+          </figcaption>
+        </figure>
+      </section>
+
+      <section className="track-section" aria-label="Role filters">
+        {tracks.map((track) => (
+          <button
+            type="button"
+            key={track.id}
+            className={activeTrack === track.id ? "track-card active" : "track-card"}
+            onClick={() => setActiveTrack(track.id)}
+          >
+            <span>{track.label}</span>
+            <strong>{track.headline}</strong>
+            <p>{track.description}</p>
+          </button>
+        ))}
+      </section>
+
+      <section id="projects" className="content-section">
+        <div className="section-heading">
+          <p>{currentTrack.label}</p>
+          <h2>Featured Projects</h2>
+          <span>{currentTrack.description}</span>
+        </div>
+
+        <div className="project-list">
+          {visibleProjects.map((project) => (
+            <article className="project-card" key={project.title}>
+              <div className="project-media">
+                {project.image ? (
+                  <img src={project.image} alt={project.imageAlt ?? `${project.title} preview`} />
+                ) : (
+                  <div className="project-placeholder">
+                    <span>{project.track.toUpperCase()}</span>
+                    <strong>{project.title}</strong>
+                    <p>{project.demoState}</p>
                   </div>
                 )}
               </div>
-            ))}
-          </div>
-        </section>
-        
-        {/* 实习经历 */}
-        <section id="experience" className="mb-20">
-          <div className="flex items-center mb-6">
-            <div className="w-10 h-10 rounded-full bg-green-100 dark:bg-green-900 flex items-center justify-center mr-3">
-              <i className="fa-solid fa-briefcase text-green-600 dark:text-green-400"></i>
-            </div>
-            <h2 className="text-2xl md:text-3xl font-bold">{translations.sections.experience[language]}</h2>
-          </div>
-          
-          <div className="space-y-6">
-             {currentResumeData.internships.map((internship, index) => (
-              <div key={index} className={panelClassName}>
-                <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-2">
-                  <h3 className="text-xl font-semibold">{internship.position}</h3>
-                  <span className="text-sm text-gray-500 dark:text-gray-400 mt-1 md:mt-0">{internship.period}</span>
+              <div className="project-body">
+                <div className="project-meta">
+                  <span>{project.role}</span>
+                  <span>{project.period}</span>
                 </div>
-                <div className="flex items-center text-blue-600 dark:text-blue-400 font-medium mb-3">
-                  <i className="fa-solid fa-building mr-2"></i>
-                  <span>{internship.company}</span>
-                </div>
-                <div className="flex items-center text-gray-500 dark:text-gray-400 mb-4">
-                  <i className="fa-solid fa-map-marker-alt mr-2"></i>
-                  <span>{internship.location}</span>
-                </div>
-                
-                <h4 className="font-medium text-gray-900 dark:text-gray-100 mb-2">{language === 'zh' ? '工作职责:' : 'Responsibilities:'}</h4>
-                <ul className="list-disc list-inside text-gray-700 dark:text-gray-300 space-y-2">
-                  {internship.responsibilities.map((resp, idx) => (
-                    <li key={idx}>{resp}</li>
+                <h3>{project.title}</h3>
+                <p>{project.summary}</p>
+                <ul>
+                  {project.highlights.map((highlight) => (
+                    <li key={highlight}>{highlight}</li>
                   ))}
                 </ul>
-              </div>
-            ))}
-          </div>
-        </section>
-        
-        {/* 项目经验 */}
-        <section id="projects" className="mb-20">
-          <div className="flex items-center mb-6">
-            <div className="w-10 h-10 rounded-full bg-purple-100 dark:bg-purple-900 flex items-center justify-center mr-3">
-              <i className="fa-solid fa-code text-purple-600 dark:text-purple-400"></i>
-            </div>
-            <h2 className="text-2xl md:text-3xl font-bold">{translations.sections.projects[language]}</h2>
-          </div>
-          
-          {/* 项目分类筛选 */}
-          <div className="flex flex-wrap gap-2 mb-8">
-            <button
-              onClick={() => setActiveCategory('all')}
-              className={cn(
-                "section-chip px-4 py-2 rounded-full text-sm font-medium transition-all hover:-translate-y-0.5",
-                activeCategory === 'all' 
-                  ? "bg-purple-600 text-white" 
-                  : "bg-white/55 text-slate-700 hover:bg-white/85"
-              )}
-            >
-              {translations.buttons.allProjects[language]}
-            </button>
-            <button
-              onClick={() => setActiveCategory('development')}
-              className={cn(
-                "section-chip px-4 py-2 rounded-full text-sm font-medium transition-all hover:-translate-y-0.5",
-                activeCategory === 'development' 
-                  ? "bg-blue-600 text-white" 
-                  : "bg-white/55 text-slate-700 hover:bg-white/85"
-              )}
-            >
-              {translations.buttons.devProjects[language]}
-            </button>
-            <button
-              onClick={() => setActiveCategory('machine-learning')}
-              className={cn(
-                "section-chip px-4 py-2 rounded-full text-sm font-medium transition-all hover:-translate-y-0.5",
-                activeCategory === 'machine-learning' 
-                  ? "bg-green-600 text-white" 
-                  : "bg-white/55 text-slate-700 hover:bg-white/85"
-              )}
-            >
-              {translations.buttons.mlProjects[language]}
-            </button>
-          </div>
-          
-          {/* 项目列表 */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {filteredProjects.map((project, index) => (
-              <div 
-                key={index} 
-                className="glass-panel glass-panel-hover rounded-[28px] overflow-hidden border border-white/40 transition-all duration-300"
-              >
-                <div className="p-6">
-                  <div className="flex justify-between items-start mb-2">
-                    <h3 className="text-lg font-semibold">{project.title}</h3>
-                    {project.link && (
-                      <a 
-                        href={project.link} 
-                        target="_blank" 
-                        rel="noopener noreferrer"
-                        className="text-blue-600 dark:text-blue-400 hover:underline"
-                      >
-                      <i className="fa-brands fa-github text-2xl"></i>
-                      </a>
-                    )}
-                  </div>
-                  
-                  <div className="flex items-center text-gray-500 dark:text-gray-400 text-sm mb-3">
-                    <i className="fa-solid fa-user mr-1"></i>
-                    <span>{project.role}</span>
-                  </div>
-                  
-                  <div className="flex items-center text-gray-500 dark:text-gray-400 text-sm mb-3">
-                    <i className="fa-solid fa-calendar mr-1"></i>
-                    <span>{project.period}</span>
-                  </div>
-                  
-                  <div className="flex items-center text-gray-500 dark:text-gray-400 text-sm mb-4">
-                    <i className="fa-solid fa-map-marker-alt mr-1"></i>
-                    <span>{project.location}</span>
-                  </div>
-                  
-                  <h4 className="font-medium text-gray-900 dark:text-gray-100 mb-2 text-sm">{language === 'zh' ? '项目描述:' : 'Description:'}</h4>
-                  <ul className="list-disc list-inside text-gray-700 dark:text-gray-300 text-sm space-y-1 mb-4">
-                    {project.description.slice(0, expandedProjects[index] ? project.description.length : 2).map((desc, idx) => (
-                      <li key={idx}>{desc}</li>
-                    ))}
-                    {project.description.length > 2 && (
-                      <button 
-                        onClick={() => toggleProjectExpand(index)}
-                        className="text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 hover:underline text-sm font-medium transition-colors mt-1"
-                      >
-                        {expandedProjects[index] ? translations.buttons.showLess[language] : translations.buttons.viewMore[language]}
-                      </button>
-                    )}
-                  </ul>
-                  
-                  <div className="mt-auto pt-4 border-t border-gray-100 dark:border-gray-700">
-                    <span className={cn(
-                      "inline-block px-3 py-1 rounded-full text-xs font-medium",
-                      project.category === 'development' 
-                        ? "bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-100" 
-                        : "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-100"
-                    )}>
-                      {project.category === 'development' 
-                        ? translations.buttons.devProjects[language] 
-                        : translations.buttons.mlProjects[language]}
-                    </span>
-                  </div>
+                <div className="stack-row">
+                  {project.stack.map((item) => (
+                    <span key={item}>{item}</span>
+                  ))}
+                </div>
+                <div className="demo-note">
+                  <strong>Demo material:</strong> {project.demoState}
+                </div>
+                <div className="link-row">
+                  {project.links.map((link) => (
+                    <a
+                      href={link.href}
+                      key={`${project.title}-${link.label}`}
+                      target={link.href.startsWith("#") ? undefined : "_blank"}
+                      rel={link.href.startsWith("#") ? undefined : "noreferrer"}
+                    >
+                      <span>{link.kind}</span>
+                      {link.label}
+                    </a>
+                  ))}
                 </div>
               </div>
-            ))}
-          </div>
-        </section>
-        
-        {/* 技能部分 */}
-        <section id="skills" className="mb-20">
-          <div className="flex items-center mb-6">
-            <div className="w-10 h-10 rounded-full bg-amber-100 dark:bg-amber-900 flex items-center justify-center mr-3">
-              <i className="fa-solid fa-cogs text-amber-600 dark:text-amber-400"></i>
-            </div>
-            <h2 className="text-2xl md:text-3xl font-bold">{translations.sections.skills[language]}</h2>
-          </div>
-          
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {/* 语言技能 */}
-            <div className={panelClassName}>
-              <h3 className="text-lg font-semibold mb-4 flex items-center">
-                <i className="fa-solid fa-language text-purple-500 mr-2"></i>
-                {translations.sections.languageSkills[language]}
-              </h3>
-              <ul className="space-y-3">
-                 {currentResumeData.skills.languages.map((lang, index) => (
-                  <li key={index} className="flex justify-between items-center">
-                    <span>{lang.name}</span>
-                    <span className="text-sm text-gray-500 dark:text-gray-400">{lang.level}</span>
-                  </li>
-                ))}
-              </ul>
-            </div>
-            
-            {/* 编程语言 */}
-            <div className={panelClassName}>
-              <h3 className="text-lg font-semibold mb-4 flex items-center">
-                <i className="fa-solid fa-code text-blue-500 mr-2"></i>
-                {translations.sections.programmingLanguages[language]}
-              </h3>
-              <div className="flex flex-wrap gap-2">
-                 {currentResumeData.skills.programming.map((lang, index) => (
-                  <span 
-                    key={index} 
-                    className="px-3 py-1 bg-gray-100 dark:bg-gray-700 rounded-full text-sm"
-                  >
-                    {lang}
-                  </span>
-                ))}
-              </div>
-            </div>
-            
-            {/* 技术能力 */}
-            <div className={panelClassName}>
-              <h3 className="text-lg font-semibold mb-4 flex items-center">
-                <i className="fa-solid fa-microchip text-green-500 mr-2"></i>
-                {translations.sections.technicalSkills[language]}
-              </h3>
-              <div className="flex flex-wrap gap-2">
-                 {currentResumeData.skills.technologies.map((tech, index) => (
-                  <span 
-                    key={index} 
-                    className="px-3 py-1 bg-gray-100 dark:bg-gray-700 rounded-full text-sm"
-                  >
-                    {tech}
-                  </span>
-                ))}
-              </div>
-            </div>
-          </div>
-        </section>
-        
-        {/* 发表与奖项 */}
-        <section id="publications" className="mb-20">
-          <div className="flex items-center mb-6">
-            <div className="w-10 h-10 rounded-full bg-red-100 dark:bg-red-900 flex items-center justify-center mr-3">
-              <i className="fa-solid fa-trophy text-red-600 dark:text-red-400"></i>
-            </div>
-            <h2 className="text-2xl md:text-3xl font-bold">{translations.sections.publications[language]}</h2>
-          </div>
-          
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {/* 论文发表 */}
-            <div className={panelClassName}>
-              <h3 className="text-lg font-semibold mb-4 flex items-center">
-                <i className="fa-solid fa-book text-blue-500 mr-2"></i>
-                {translations.sections.publicationsSection[language]}
-              </h3>
-                <ul className="space-y-6">{currentResumeData.publications.map((pub, index) => (
-                   <li key={index} className="text-sm text-gray-700 dark:text-gray-300">
-                     <p className="mb-2">{pub.reference}</p>
-                     <div className="flex items-center">
-                       <a 
-                         href={pub.link} 
-                         target="_blank" 
-                         rel="noopener noreferrer"
-                         className="text-blue-600 dark:text-blue-400 hover:underline mr-3"
-                       >
-                         <i className="fa-solid fa-link mr-1"></i>DOI: {pub.link.split('org/')[1]}
-                       </a>
-                       <span className="text-gray-500 dark:text-gray-400">({pub.year})</span>
-                     </div>
-                   </li>
-                 ))}
-               </ul>
-            </div>
-            
-            {/* 奖项 */}
-            <div className={panelClassName}>
-              <h3 className="text-lg font-semibold mb-4 flex items-center">
-                <i className="fa-solid fa-award text-yellow-500 mr-2"></i>
-                {translations.sections.awards[language]}
-              </h3>
-              <ul className="space-y-4">
-                 {currentResumeData.awards.map((award, index) => (
-                  <li key={index} className="flex items-start">
-                    <div className="text-yellow-500 mr-3 mt-1">
-                      <i className="fa-solid fa-medal"></i>
-                    </div>
-                    <div>
-                      <p className="text-sm text-gray-700 dark:text-gray-300 mb-1">{award.title}</p>
-                      <span className="text-sm text-gray-500 dark:text-gray-400">{award.year}</span>
-                    </div>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          </div>
-        </section>
-      </main>
-      
-      {/* 页脚 */}
-      <footer className="bg-gray-100 dark:bg-gray-800 py-8 border-t border-gray-200 dark:border-gray-700">
-        <div className="container mx-auto px-4 md:px-6 text-center">
-          <div className="flex justify-center space-x-6 mb-4">
-            <a href={resumeData.contact.linkedin} target="_blank" rel="noopener noreferrer" className="text-gray-600 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 transition-colors">
-              <i className="fa-brands fa-linkedin text-xl"></i>
-            </a>
-               <a href="https://github.com/Harrison832-Beep" target="_blank" rel="noopener noreferrer" className="text-gray-600 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 transition-colors">
-                <i className="fa-brands fa-github text-xl"></i>
-            </a>
-            <a href={`mailto:${resumeData.contact.email}`} className="text-gray-600 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 transition-colors">
-              <i className="fa-regular fa-envelope text-xl"></i>
-            </a>
-          </div>
-          <p className="text-sm text-gray-500 dark:text-gray-400">
-            © {new Date().getFullYear()} {currentResumeData.name}. {language === 'zh' ? '保留所有权利。' : 'All rights reserved.'}
-          </p>
+            </article>
+          ))}
         </div>
-      </footer>
-    </div>
+      </section>
+
+      <section id="resumes" className="content-section">
+        <div className="section-heading">
+          <p>Role-specific PDFs</p>
+          <h2>One Site, Three Resume Paths</h2>
+          <span>
+            I would keep one personal site instead of three separate websites. The filters, project ordering and
+            resume PDFs give each employer the version they need without splitting traffic across multiple URLs.
+          </span>
+        </div>
+        <div className="resume-grid">
+          {resumes.map((resume) => (
+            <a href={resume.href} className="resume-card" key={resume.title} target="_blank" rel="noreferrer">
+              <span>{resume.tag}</span>
+              <strong>{resume.title}</strong>
+              <p>{resume.fit}</p>
+            </a>
+          ))}
+        </div>
+      </section>
+
+      <section id="demo-framework" className="demo-framework">
+        <div className="section-heading compact">
+          <p>How Projects Should Be Shown</p>
+          <h2>Proof First, Resume Text Second</h2>
+          <span>
+            This site should not repeat the PDF line by line. It should show evidence: videos, screenshots, papers,
+            code links and short technical write-ups.
+          </span>
+        </div>
+        <div className="proof-grid">
+          {proofItems.map((item) => (
+            <div className="proof-card" key={item.title}>
+              <strong>{item.title}</strong>
+              <p>{item.text}</p>
+            </div>
+          ))}
+        </div>
+        <div className="demo-roadmap">
+          <div>
+            <strong>Best next additions</strong>
+            <p>1. UE4 VR 30-60s video. 2. AI Q&A screen recording. 3. Android RecipeBook and MusicPlayer phone clips. 4. GraphXR screenshot/GIF.</p>
+          </div>
+          <div>
+            <strong>Where to put links</strong>
+            <p>Each project card already has a link row. Replace the demo placeholders with GitHub, Bilibili/YouTube, hosted demo or paper links when ready.</p>
+          </div>
+        </div>
+      </section>
+
+      <section id="contact" className="contact-section">
+        <div>
+          <p className="eyebrow">Contact</p>
+          <h2>Chen Qicheng</h2>
+          <span>Android / AI full-stack / Game and VR development</span>
+        </div>
+        <div className="contact-links">
+          <a href="mailto:wharrison832@gmail.com">wharrison832@gmail.com</a>
+          <a href="https://www.linkedin.com/in/qicheng-chen" target="_blank" rel="noreferrer">
+            LinkedIn
+          </a>
+          <a href="https://github.com/Harrison832-Beep" target="_blank" rel="noreferrer">
+            GitHub
+          </a>
+        </div>
+      </section>
+    </main>
   );
 }

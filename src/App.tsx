@@ -1,4 +1,4 @@
-import { Routes, Route } from "react-router-dom";
+import { Navigate, Routes, Route } from "react-router-dom";
 import Home from "@/pages/Home";
 import { useState } from "react";
 import { AuthContext } from '@/contexts/authContext';
@@ -17,8 +17,9 @@ export default function App() {
         value={{ isAuthenticated, setIsAuthenticated, logout }}
       >
         <Routes>
+          <Route path="/" element={<Navigate to="/HarrisonPage" replace />} />
           <Route path="/HarrisonPage" element={<Home />} />
-          <Route path="/HarrisonPage/other" element={<div className="text-center text-xl">Other Page - Coming Soon</div>} />
+          <Route path="/HarrisonPage/other" element={<Navigate to="/HarrisonPage" replace />} />
         </Routes>
       </AuthContext.Provider>
     </LanguageProvider>
