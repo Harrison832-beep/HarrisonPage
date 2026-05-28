@@ -28,7 +28,7 @@ type Project = {
   imageAlt?: Localized;
   mediaFit?: "cover" | "contain";
   video?: string;
-  videos?: { label: Localized; src: string }[];
+  videos?: { label: Localized; src: string; kind?: "video" | "image" }[];
   demoState: Localized;
   demoAssets?: DemoAsset[];
   hideDemoNote?: boolean;
@@ -218,6 +218,7 @@ const projects: Project[] = [
     videos: [
       { label: { en: "Truck Tracking", zh: "卡车跟踪" }, src: asset("media/truck-tracking.mp4") },
       { label: { en: "Port Overview", zh: "码头总览" }, src: asset("media/port-v8272.mp4") },
+      { label: { en: "Class diagram", zh: "类图设计" }, src: asset("media/VR-port-class-diagram.png"), kind: "image" },
     ],
     imageAlt: { en: "UE4 port logistics VR simulation with cranes, containers and trucks", zh: "UE4 港口物流 VR 仿真截图" },
     demoState: {
@@ -229,7 +230,6 @@ const projects: Project[] = [
       { title: { en: "Acceleration", zh: "加速逻辑" }, src: asset("media/Truck-acc.gif"), kind: "gif" },
       { title: { en: "Turning", zh: "转向逻辑" }, src: asset("media/truck-rot.gif"), kind: "gif" },
       { title: { en: "Skip waiting", zh: "跳过等待" }, src: asset("media/truck-skip-waiting.gif"), kind: "gif" },
-      { title: { en: "Class diagram", zh: "类图设计" }, src: asset("media/VR-port-class-diagram.png"), kind: "image", wide: true },
     ],
     hideDemoNote: true,
     highlights: [
@@ -597,45 +597,50 @@ export default function Home() {
         <div className="project-list">
           {visibleProjects.map((project) => {
             const projectKey = project.title.en;
-            const videoOptions = project.videos ?? (project.video ? [{ label: { en: "Demo Video", zh: "Demo 视频" }, src: project.video }] : []);
-            const activeVideo = activeVideos[projectKey] ?? videoOptions[0]?.src;
-            const activeVideoIndex = Math.max(
+            const mediaOptions = project.videos ?? (project.video ? [{ label: { en: "Demo Video", zh: "Demo 视频" }, src: project.video }] : []);
+            const activeMediaSrc = activeVideos[projectKey] ?? mediaOptions[0]?.src;
+            const activeMediaIndex = Math.max(
               0,
-              videoOptions.findIndex((video) => video.src === activeVideo),
+              mediaOptions.findIndex((media) => media.src === activeMediaSrc),
             );
-            const previousVideo = videoOptions[(activeVideoIndex - 1 + videoOptions.length) % videoOptions.length];
-            const nextVideo = videoOptions[(activeVideoIndex + 1) % videoOptions.length];
+            const activeMedia = mediaOptions[activeMediaIndex];
+            const previousMedia = mediaOptions[(activeMediaIndex - 1 + mediaOptions.length) % mediaOptions.length];
+            const nextMedia = mediaOptions[(activeMediaIndex + 1) % mediaOptions.length];
 
             return (
               <article className="project-card" key={projectKey}>
                 <div className="project-media">
-                  {activeVideo ? (
+                  {activeMediaSrc ? (
                     <>
-                      <video
-                        key={activeVideo}
-                        controls
-                        controlsList="nodownload"
-                        disablePictureInPicture
-                        onContextMenu={(event) => event.preventDefault()}
-                        preload="metadata"
-                        poster={project.image}
-                        aria-label={`${project.title[language]} demo video`}
-                      >
-                        <source src={activeVideo} type="video/mp4" />
-                        Your browser does not support the video tag.
-                      </video>
-                      {videoOptions.length > 1 ? (
+                      {activeMedia?.kind === "image" ? (
+                        <img className="fit-contain-media" src={activeMediaSrc} alt={activeMedia.label[language]} />
+                      ) : (
+                        <video
+                          key={activeMediaSrc}
+                          controls
+                          controlsList="nodownload"
+                          disablePictureInPicture
+                          onContextMenu={(event) => event.preventDefault()}
+                          preload="metadata"
+                          poster={project.image}
+                          aria-label={`${project.title[language]} demo video`}
+                        >
+                          <source src={activeMediaSrc} type="video/mp4" />
+                          Your browser does not support the video tag.
+                        </video>
+                      )}
+                      {mediaOptions.length > 1 ? (
                         <>
                           <button
                             className="video-arrow previous"
                             onClick={() =>
                               setActiveVideos((current) => ({
                                 ...current,
-                                [projectKey]: previousVideo.src,
+                                [projectKey]: previousMedia.src,
                               }))
                             }
                             type="button"
-                            aria-label={`${language === "en" ? "Play previous video" : "播放上一个视频"}: ${previousVideo.label[language]}`}
+                            aria-label={`${language === "en" ? "Show previous media" : "显示上一个素材"}: ${previousMedia.label[language]}`}
                           >
                             ‹
                           </button>
@@ -644,16 +649,16 @@ export default function Home() {
                             onClick={() =>
                               setActiveVideos((current) => ({
                                 ...current,
-                                [projectKey]: nextVideo.src,
+                                [projectKey]: nextMedia.src,
                               }))
                             }
                             type="button"
-                            aria-label={`${language === "en" ? "Play next video" : "播放下一个视频"}: ${nextVideo.label[language]}`}
+                            aria-label={`${language === "en" ? "Show next media" : "显示下一个素材"}: ${nextMedia.label[language]}`}
                           >
                             ›
                           </button>
                           <div className="video-status" aria-live="polite">
-                            {videoOptions[activeVideoIndex]?.label[language]}
+                            {mediaOptions[activeMediaIndex]?.label[language]}
                           </div>
                         </>
                       ) : null}
