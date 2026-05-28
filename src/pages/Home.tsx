@@ -1,273 +1,521 @@
 import { useMemo, useState } from "react";
 
+type Language = "en" | "zh";
+type Localized = Record<Language, string>;
 type TrackId = "all" | "ai" | "android" | "vr";
 
 type ProjectLink = {
-  label: string;
+  label: Localized;
   href: string;
   kind: "Demo" | "Code" | "Paper" | "Resume" | "Video";
 };
 
+type DemoAsset = {
+  title: Localized;
+  src: string;
+  kind: "gif" | "image";
+  wide?: boolean;
+};
+
 type Project = {
-  title: string;
+  title: Localized;
   track: Exclude<TrackId, "all">;
-  role: string;
+  role: Localized;
   period: string;
-  summary: string;
+  summary: Localized;
   stack: string[];
   image?: string;
-  imageAlt?: string;
-  demoState: string;
-  highlights: string[];
+  imageAlt?: Localized;
+  mediaFit?: "cover" | "contain";
+  video?: string;
+  videos?: { label: Localized; src: string }[];
+  demoState: Localized;
+  demoAssets?: DemoAsset[];
+  hideDemoNote?: boolean;
+  highlights: Localized[];
   links: ProjectLink[];
 };
 
 const base = import.meta.env.BASE_URL;
 const asset = (path: string) => `${base}${path.replace(/^\//, "")}`;
 
-const tracks: { id: TrackId; label: string; headline: string; description: string }[] = [
+const ui = {
+  en: {
+    nav: ["Projects", "Resumes", "Demo Framework", "Contact"],
+    eyebrow: "Portfolio / Demo Hub",
+    heroTitle: "AI applications, Android apps and VR simulation systems.",
+    heroLead:
+      "Computer Science graduate with React/FastAPI AI projects, native Android work, first-author research papers and UE4 VR interaction experience.",
+    viewProjects: "View Projects",
+    featuredProof: "Featured Proof",
+    featuredProofText: "UE4 VR simulation demo material is ready to become the first video showcase.",
+    featuredProjects: "Featured Projects",
+    rolePdfs: "Role-specific PDFs",
+    resumeSectionTitle: "One Site, Three Resume Paths",
+    resumeSectionText:
+      "I would keep one personal site instead of three separate websites. The filters, project ordering and resume PDFs give each employer the version they need without splitting traffic across multiple URLs.",
+    demoLabel: "How Projects Should Be Shown",
+    demoTitle: "Proof First, Resume Text Second",
+    demoText:
+      "This site should not repeat the PDF line by line. It should show evidence: videos, screenshots, papers, code links and short technical write-ups.",
+    bestNext: "Best next additions",
+    bestNextText:
+      "1. UE4 VR 30-60s video. 2. AI Q&A screen recording. 3. Android RecipeBook and MusicPlayer phone clips. 4. GraphXR screenshot/GIF.",
+    linkPlacement: "Where to put links",
+    linkPlacementText:
+      "Each project card already has a link row. Replace the demo placeholders with GitHub, Bilibili/YouTube, hosted demo or paper links when ready.",
+    demoMaterial: "Demo material:",
+    contactRole: "Android / AI full-stack / Game and VR development",
+  },
+  zh: {
+    nav: ["项目", "简历", "展示框架", "联系"],
+    eyebrow: "作品集 / Demo Hub",
+    heroTitle: "AI 应用、Android 客户端与 VR 仿真项目展示。",
+    heroLead:
+      "计算机科学背景，项目覆盖 React/FastAPI AI 应用、原生 Android、第一作者论文，以及 UE4 VR 交互仿真。",
+    viewProjects: "查看项目",
+    featuredProof: "重点展示",
+    featuredProofText: "UE4 港口物流 VR 项目已经有视频素材，可以作为主页里最优先展示的 Demo。",
+    featuredProjects: "重点项目",
+    rolePdfs: "分方向简历 PDF",
+    resumeSectionTitle: "一个主页，三条投递路径",
+    resumeSectionText:
+      "建议保留一个个人主页，而不是拆成三个网站。通过方向筛选、项目排序和三份 PDF 简历，让不同岗位的面试官看到对应版本。",
+    demoLabel: "项目应该怎么展示",
+    demoTitle: "先展示证据，再补简历文字",
+    demoText:
+      "个人主页不要只是复刻简历。更适合展示视频、截图、论文、代码链接，以及简短的技术说明。",
+    bestNext: "下一步最值得补的内容",
+    bestNextText:
+      "1. UE4 VR 30-60 秒视频。2. AI 问答项目录屏。3. RecipeBook 和 MusicPlayer 手机录屏。4. GraphXR 截图或 GIF。",
+    linkPlacement: "链接应该放在哪里",
+    linkPlacementText:
+      "每个项目卡片已经有链接区域。后续可以替换为 GitHub、Bilibili/YouTube、在线 Demo 或论文链接。",
+    demoMaterial: "Demo 素材：",
+    contactRole: "Android / AI 全栈 / 游戏与 VR 开发",
+  },
+};
+
+const tracks: { id: TrackId; label: Localized; headline: Localized; description: Localized }[] = [
   {
     id: "all",
-    label: "All Work",
-    headline: "One portfolio, three role stories.",
-    description:
-      "A single GitHub Pages site works better than three separate sites: recruiters get one URL, while filters and PDF resumes change the story for each role.",
+    label: { en: "All Work", zh: "全部项目" },
+    headline: { en: "One portfolio, three role stories.", zh: "一个主页，承载三种岗位叙事。" },
+    description: {
+      en: "A single GitHub Pages site works better than three separate sites: recruiters get one URL, while filters and PDF resumes change the story for each role.",
+      zh: "比起做三个网站，一个 GitHub Pages 主页更稳妥：投递时只发一个链接，再用筛选和简历 PDF 区分不同岗位方向。",
+    },
   },
   {
     id: "ai",
-    label: "AI Full-stack",
-    headline: "AI applications, RAG systems and published ML research.",
-    description:
-      "React/FastAPI projects, LLM workflows, recommendation experiments and first-author research papers.",
+    label: { en: "AI Full-stack", zh: "AI 全栈" },
+    headline: { en: "AI applications, RAG systems and published ML research.", zh: "AI 应用、RAG 系统与已发表机器学习研究。" },
+    description: {
+      en: "React/FastAPI projects, LLM workflows, recommendation experiments and first-author research papers.",
+      zh: "突出 React/FastAPI、LLM 工作流、推荐实验和第一作者论文，适合 AI 应用开发与 Python 后端方向。",
+    },
   },
   {
     id: "android",
-    label: "Android",
-    headline: "Native Android apps, media playback and BLE data collection.",
-    description:
-      "Java/Kotlin Android work covering Activity, Service, ContentProvider, RecyclerView, MediaPlayer, permissions and sensor data capture.",
+    label: { en: "Android", zh: "Android 客户端" },
+    headline: { en: "Native Android apps, media playback and BLE data collection.", zh: "原生 Android 应用、媒体播放与 BLE 数据采集。" },
+    description: {
+      en: "Java/Kotlin Android work covering Activity, Service, ContentProvider, RecyclerView, MediaPlayer, permissions and sensor data capture.",
+      zh: "覆盖 Activity、Service、ContentProvider、RecyclerView、MediaPlayer、权限适配和传感器数据采集。",
+    },
   },
   {
     id: "vr",
-    label: "Game / VR",
-    headline: "UE4 VR interaction and data-driven simulation systems.",
-    description:
-      "Gameplay logic, VR interaction modes, truck task systems, Blueprint refactoring and real-world data driven simulation.",
+    label: { en: "Game / VR", zh: "游戏 / VR" },
+    headline: { en: "UE4 VR interaction and data-driven simulation systems.", zh: "UE4 VR 交互与数据驱动仿真系统。" },
+    description: {
+      en: "Gameplay logic, VR interaction modes, truck task systems, Blueprint refactoring and real-world data driven simulation.",
+      zh: "突出 Gameplay 逻辑、VR 交互模式、卡车任务系统、蓝图重构和真实数据驱动仿真。",
+    },
   },
 ];
 
 const resumes = [
   {
-    title: "AI Full-stack Resume",
+    title: { en: "AI Full-stack Resume", zh: "AI 全栈简历" },
     href: asset("resumes/qicheng-chen-ai-fullstack.pdf"),
     tag: "React / FastAPI / LLM",
-    fit: "For AI application development, Python backend, RAG and data/ML-adjacent full-stack roles.",
+    fit: {
+      en: "For AI application development, Python backend, RAG and data/ML-adjacent full-stack roles.",
+      zh: "用于 AI 应用开发、Python 后端、RAG、数据/ML 相关全栈岗位。",
+    },
   },
   {
-    title: "Android Resume",
+    title: { en: "Android Resume", zh: "Android 客户端简历" },
     href: asset("resumes/qicheng-chen-android.pdf"),
     tag: "Java / Kotlin / Android SDK",
-    fit: "For Android, client-side development, mobile app and sensor data collection roles.",
+    fit: {
+      en: "For Android, client-side development, mobile app and sensor data collection roles.",
+      zh: "用于 Android、客户端开发、移动应用和传感器数据采集相关岗位。",
+    },
   },
   {
-    title: "Game / VR Resume",
+    title: { en: "Game / VR Resume", zh: "游戏 / VR 简历" },
     href: asset("resumes/qicheng-chen-game-vr.pdf"),
     tag: "UE4 / Blueprint / VR",
-    fit: "For UE4, VR interaction, gameplay programming and simulation development roles.",
+    fit: {
+      en: "For UE4, VR interaction, gameplay programming and simulation development roles.",
+      zh: "用于 UE4、VR 交互、Gameplay 编程和仿真开发岗位。",
+    },
   },
 ];
 
 const projects: Project[] = [
   {
-    title: "AI Document Q&A System",
+    title: { en: "AI Document Q&A System", zh: "AI 文档问答系统" },
     track: "ai",
-    role: "Independent full-stack developer",
+    role: { en: "Independent full-stack developer", zh: "独立全栈开发" },
     period: "2026",
-    summary:
-      "A React + FastAPI AI application that parses uploaded files, builds temporary retrieval indexes and answers questions through an LLM/RAG workflow.",
+    summary: {
+      en: "A React + FastAPI AI application that parses uploaded files, builds temporary retrieval indexes and answers questions through an LLM/RAG workflow.",
+      zh: "基于 React + FastAPI 的 AI 应用，支持上传文件解析、临时检索索引构建，并通过 LLM/RAG 流程回答问题。",
+    },
     stack: ["React", "FastAPI", "LangGraph", "LangChain", "Kimi API", "Ollama", "RAG"],
-    demoState: "Needs a 60-90s screen recording: upload a file, ask a question, show retrieval and answer generation.",
+    demoState: {
+      en: "Needs a 60-90s screen recording: upload a file, ask a question, show retrieval and answer generation.",
+      zh: "建议补 60-90 秒录屏：上传文件、提问、展示检索过程和回答生成。",
+    },
     highlights: [
-      "Supports PDF, CSV, Excel, TXT and Markdown parsing with chunking and temporary vector search.",
-      "Uses Ollama embeddings and LangChain InMemoryVectorStore for top-k retrieval.",
-      "LangGraph decides whether to call retrieval before generating the final answer through Kimi API.",
-      "FastAPI provides API routes and serves the React build for a local one-command demo.",
+      {
+        en: "Supports PDF, CSV, Excel, TXT and Markdown parsing with chunking and temporary vector search.",
+        zh: "支持 PDF、CSV、Excel、TXT、Markdown 解析，并进行切分和临时向量检索。",
+      },
+      {
+        en: "Uses Ollama embeddings and LangChain InMemoryVectorStore for top-k retrieval.",
+        zh: "使用 Ollama Embeddings 和 LangChain InMemoryVectorStore 完成 top-k 检索。",
+      },
+      {
+        en: "LangGraph decides whether to call retrieval before generating the final answer through Kimi API.",
+        zh: "通过 LangGraph 判断是否需要调用检索，再使用 Kimi API 生成最终回答。",
+      },
+      {
+        en: "FastAPI provides API routes and serves the React build for a local one-command demo.",
+        zh: "FastAPI 提供接口并托管 React 构建产物，支持本地一键运行 Demo。",
+      },
     ],
     links: [
-      { label: "AI resume", href: asset("resumes/qicheng-chen-ai-fullstack.pdf"), kind: "Resume" },
-      { label: "Demo slot", href: "#demo-framework", kind: "Demo" },
+      { label: { en: "AI resume", zh: "AI 简历" }, href: asset("resumes/qicheng-chen-ai-fullstack.pdf"), kind: "Resume" },
+      { label: { en: "Demo slot", zh: "Demo 占位" }, href: "#demo-framework", kind: "Demo" },
     ],
   },
   {
-    title: "UE4 Port Logistics VR Simulation",
+    title: { en: "UE4 Port Logistics VR Simulation", zh: "UE4 港口物流 VR 交互仿真" },
     track: "vr",
-    role: "UE4 / VR gameplay developer",
+    role: { en: "UE4 / VR gameplay developer", zh: "UE4 / VR Gameplay 开发" },
     period: "2021-2022",
-    summary:
-      "A port logistics VR simulation extended from an existing UE4 base system with truck gameplay, task management and data-driven container transport flows.",
+    summary: {
+      en: "A port logistics VR simulation extended from an existing UE4 base system with truck gameplay, task management and data-driven container transport flows.",
+      zh: "在已有 UE4 港口 VR 基础系统上扩展卡车玩法、任务管理和数据驱动的集装箱运输流程。",
+    },
     stack: ["Unreal Engine 4", "Blueprint", "VR", "Gameplay", "Flask", "MySQL"],
     image: asset("media/vr-port.png"),
-    imageAlt: "UE4 port logistics VR simulation with cranes, containers and trucks",
-    demoState: "Best first video to add: 30-60s gameplay cut showing truck task, crane coordination, VR interaction and score feedback.",
+    video: asset("media/truck-tracking.mp4"),
+    videos: [
+      { label: { en: "Truck Tracking", zh: "卡车跟踪" }, src: asset("media/truck-tracking.mp4") },
+      { label: { en: "Port Overview", zh: "码头总览" }, src: asset("media/port-v8272.mp4") },
+    ],
+    imageAlt: { en: "UE4 port logistics VR simulation with cranes, containers and trucks", zh: "UE4 港口物流 VR 仿真截图" },
+    demoState: {
+      en: "Switch between Truck Tracking gameplay and the broader port overview demo video.",
+      zh: "可在卡车跟踪玩法视频和码头总览视频之间切换播放。",
+    },
+    demoAssets: [
+      { title: { en: "Truck movement", zh: "卡车移动" }, src: asset("media/truck.gif"), kind: "gif" },
+      { title: { en: "Acceleration", zh: "加速逻辑" }, src: asset("media/Truck-acc.gif"), kind: "gif" },
+      { title: { en: "Turning", zh: "转向逻辑" }, src: asset("media/truck-rot.gif"), kind: "gif" },
+      { title: { en: "Skip waiting", zh: "跳过等待" }, src: asset("media/truck-skip-waiting.gif"), kind: "gif" },
+      { title: { en: "Class diagram", zh: "类图设计" }, src: asset("media/VR-port-class-diagram.png"), kind: "image", wide: true },
+    ],
+    hideDemoNote: true,
     highlights: [
-      "Implemented truck driving logic including path following, acceleration, deceleration, turning and arrival detection.",
-      "Added Mg_Auto task management to coordinate trucks, cranes and Terminal <-> Yard transport.",
-      "Designed task prompts, timer, scoring, navigation path and skip/reset flow for player-controlled truck tasks.",
-      "Processed real port history data and mapped container positions into simulation task generation.",
+      {
+        en: "Implemented truck driving logic including path following, acceleration, deceleration, turning and arrival detection.",
+        zh: "实现卡车驾驶逻辑，包括路径跟随、加速/减速、转弯和到达检测。",
+      },
+      {
+        en: "Added Mg_Auto task management to coordinate trucks, cranes and Terminal <-> Yard transport.",
+        zh: "新增 Mg_Auto 任务管理逻辑，协调卡车、吊机和 Terminal <-> Yard 运输流程。",
+      },
+      {
+        en: "Designed task prompts, timer, scoring, navigation path and skip/reset flow for player-controlled truck tasks.",
+        zh: "设计任务提示、计时、评分、导航路径，以及玩家卡车任务的跳过/重置流程。",
+      },
+      {
+        en: "Processed real port history data and mapped container positions into simulation task generation.",
+        zh: "处理真实港口历史数据，将集装箱位置映射到仿真任务生成流程中。",
+      },
     ],
     links: [
-      { label: "Game / VR resume", href: asset("resumes/qicheng-chen-game-vr.pdf"), kind: "Resume" },
-      { label: "Video slot", href: "#demo-framework", kind: "Video" },
+      { label: { en: "Game / VR resume", zh: "游戏 / VR 简历" }, href: asset("resumes/qicheng-chen-game-vr.pdf"), kind: "Resume" },
+      { label: { en: "Truck Tracking", zh: "卡车跟踪" }, href: asset("media/truck-tracking.mp4"), kind: "Video" },
+      { label: { en: "Port Overview", zh: "码头总览" }, href: asset("media/port-v8272.mp4"), kind: "Video" },
     ],
   },
   {
-    title: "Android Recipe Book",
+    title: { en: "Android Recipe Book", zh: "Android 食谱管理应用" },
     track: "android",
-    role: "Independent Android developer",
+    role: { en: "Independent Android developer", zh: "独立 Android 开发" },
     period: "2022",
-    summary:
-      "A native Android recipe manager with local persistence, multi-Activity flows, dynamic recipe forms, image selection and cooking video playback.",
+    summary: {
+      en: "A native Android recipe manager with local persistence, multi-Activity flows, dynamic recipe forms, image selection and cooking video playback.",
+      zh: "原生 Android 食谱管理应用，支持本地持久化、多 Activity 流程、动态表单、图片选择和烹饪视频播放。",
+    },
     stack: ["Java", "Android SDK", "SQLite", "ContentProvider", "RecyclerView", "VideoView"],
     image: asset("media/recipe-book.jpg"),
-    imageAlt: "Android Recipe Book app screenshot",
-    demoState: "Add a short phone recording: create recipe, choose image/video, rate recipe and delete from the list.",
+    imageAlt: { en: "Android Recipe Book app screenshot", zh: "Android 食谱管理应用截图" },
+    demoState: {
+      en: "Add a short phone recording: create recipe, choose image/video, rate recipe and delete from the list.",
+      zh: "建议补手机录屏：创建食谱、选择图片/视频、评分、列表删除。",
+    },
     highlights: [
-      "SQLite + ContentProvider storage layer accessed through ContentResolver for CRUD operations.",
-      "RecyclerView + Adapter renders recipe cards with rating, image preview, deletion and detail navigation.",
-      "Dynamic ingredient form collects variable-length fields and stores structured recipe content.",
-      "Handles image/video URI selection and Android 13 media read permissions.",
+      {
+        en: "SQLite + ContentProvider storage layer accessed through ContentResolver for CRUD operations.",
+        zh: "使用 SQLite + ContentProvider 封装本地存储层，通过 ContentResolver 完成增删改查。",
+      },
+      {
+        en: "RecyclerView + Adapter renders recipe cards with rating, image preview, deletion and detail navigation.",
+        zh: "基于 RecyclerView + Adapter 渲染食谱卡片，支持评分、图片预览、删除和详情跳转。",
+      },
+      {
+        en: "Dynamic ingredient form collects variable-length fields and stores structured recipe content.",
+        zh: "动态食材表单支持变长输入，并保存结构化食谱内容。",
+      },
+      {
+        en: "Handles image/video URI selection and Android 13 media read permissions.",
+        zh: "处理图片/视频 URI 选择，并适配 Android 13 媒体读取权限。",
+      },
     ],
     links: [
-      { label: "Android resume", href: asset("resumes/qicheng-chen-android.pdf"), kind: "Resume" },
-      { label: "Demo slot", href: "#demo-framework", kind: "Demo" },
+      { label: { en: "Android resume", zh: "Android 简历" }, href: asset("resumes/qicheng-chen-android.pdf"), kind: "Resume" },
+      { label: { en: "Demo slot", zh: "Demo 占位" }, href: "#demo-framework", kind: "Demo" },
     ],
   },
   {
-    title: "Android Music Player",
+    title: { en: "Android Music Player", zh: "Android 音乐播放器" },
     track: "android",
-    role: "Independent Android developer",
+    role: { en: "Independent Android developer", zh: "独立 Android 开发" },
     period: "2022",
-    summary:
-      "A native Android MP3 player with foreground playback, Activity-Service messaging, notification entry and playback progress synchronization.",
+    summary: {
+      en: "A native Android MP3 player with foreground playback, Activity-Service messaging, notification entry and playback progress synchronization.",
+      zh: "原生 Android MP3 播放器，支持前台服务播放、Activity-Service 通信、通知栏入口和播放进度同步。",
+    },
     stack: ["Java", "Android SDK", "MediaPlayer", "Foreground Service", "Messenger"],
     image: asset("media/music-player.jpg"),
-    imageAlt: "Android Music Player app screenshot",
-    demoState: "Add a phone recording: select local MP3, background the app, reopen from notification and seek progress.",
+    imageAlt: { en: "Android Music Player app screenshot", zh: "Android 音乐播放器截图" },
+    demoState: {
+      en: "Add a phone recording: select local MP3, background the app, reopen from notification and seek progress.",
+      zh: "建议补手机录屏：选择本地 MP3、切到后台、从通知栏返回、拖动进度条。",
+    },
     highlights: [
-      "Foreground Service carries playback so music can continue after the Activity is backgrounded.",
-      "Messenger handles play, pause, stop, duration sync, progress updates and current-song messages.",
-      "Supports ACTION_VIEW implicit intents and Android 13 READ_MEDIA_AUDIO / notification permissions.",
-      "Includes a settings screen with color picker and result callback to update the main UI.",
+      {
+        en: "Foreground Service carries playback so music can continue after the Activity is backgrounded.",
+        zh: "使用 Foreground Service 承载播放逻辑，使应用切后台后音乐仍可继续播放。",
+      },
+      {
+        en: "Messenger handles play, pause, stop, duration sync, progress updates and current-song messages.",
+        zh: "通过 Messenger 处理播放、暂停、停止、时长同步、进度更新和当前歌曲消息。",
+      },
+      {
+        en: "Supports ACTION_VIEW implicit intents and Android 13 READ_MEDIA_AUDIO / notification permissions.",
+        zh: "支持 ACTION_VIEW 隐式 Intent，并适配 Android 13 READ_MEDIA_AUDIO 和通知权限。",
+      },
+      {
+        en: "Includes a settings screen with color picker and result callback to update the main UI.",
+        zh: "实现设置页和颜色选择器，通过回调更新播放器主界面。",
+      },
     ],
     links: [
-      { label: "Android resume", href: asset("resumes/qicheng-chen-android.pdf"), kind: "Resume" },
-      { label: "Demo slot", href: "#demo-framework", kind: "Demo" },
+      { label: { en: "Android resume", zh: "Android 简历" }, href: asset("resumes/qicheng-chen-android.pdf"), kind: "Resume" },
+      { label: { en: "Demo slot", zh: "Demo 占位" }, href: "#demo-framework", kind: "Demo" },
     ],
   },
   {
-    title: "Wearable Stress Recognition Study",
+    title: { en: "Wearable Stress Recognition Study", zh: "可穿戴生理信号压力识别研究" },
     track: "android",
-    role: "First author / mobile data collection developer",
+    role: { en: "First author / mobile data collection developer", zh: "第一作者 / 移动端数据采集开发" },
     period: "2022-2023",
-    summary:
-      "A first-author Sensors paper using wearable PPG, ECG and EEG signals collected from university students for stress recognition.",
+    summary: {
+      en: "A first-author Sensors paper using wearable PPG, ECG and EEG signals collected from university students for stress recognition.",
+      zh: "第一作者 Sensors 论文，基于大学生实验采集的 PPG、ECG、EEG 生理信号进行压力识别。",
+    },
     stack: ["Kotlin", "Polar BLE SDK", "Python", "PyTorch", "PPG", "ECG", "EEG"],
-    image: asset("media/polar-ble.png"),
-    imageAlt: "Polar BLE data collection screenshot",
-    demoState: "For the portfolio, show Polar BLE data collection plus one chart of filtered PPG/ECG/EEG signals.",
+    image: asset("media/stress-paper.png"),
+    imageAlt: { en: "Sensors paper page for the wearable stress recognition study", zh: "压力检测论文 Sensors 页面截图" },
+    mediaFit: "contain",
+    demoState: {
+      en: "For the portfolio, show Polar BLE data collection plus one chart of filtered PPG/ECG/EEG signals.",
+      zh: "主页上适合展示 Polar BLE 采集截图，以及一张滤波后的 PPG/ECG/EEG 信号图。",
+    },
+    hideDemoNote: true,
     highlights: [
-      "Modified Polar BLE Android/Kotlin callbacks to record timestamped PPG data from Polar Verity Sense.",
-      "Collected data from 30 participants and organized self-reported stress labels.",
-      "Built preprocessing with resampling, Butterworth filtering, segmentation and normalization.",
-      "Compared CNN, Attention-LRCN, Self-Supervised CNN and StressNeXt models.",
+      {
+        en: "Modified Polar BLE Android/Kotlin callbacks to record timestamped PPG data from Polar Verity Sense.",
+        zh: "修改 Polar BLE Android/Kotlin 回调，记录 Polar Verity Sense 的时间戳 PPG 数据。",
+      },
+      { en: "Collected data from 30 participants and organized self-reported stress labels.", zh: "采集 30 名参与者数据，并整理自报告压力标签。" },
+      {
+        en: "Built preprocessing with resampling, Butterworth filtering, segmentation and normalization.",
+        zh: "完成重采样、Butterworth 滤波、分段和归一化等预处理流程。",
+      },
+      {
+        en: "Compared CNN, Attention-LRCN, Self-Supervised CNN and StressNeXt models.",
+        zh: "比较 CNN、Attention-LRCN、自监督 CNN 和 StressNeXt 等模型。",
+      },
     ],
     links: [
-      { label: "Paper", href: "https://doi.org/10.3390/s23136099", kind: "Paper" },
-      { label: "Android resume", href: asset("resumes/qicheng-chen-android.pdf"), kind: "Resume" },
+      { label: { en: "Paper", zh: "论文" }, href: "https://doi.org/10.3390/s23136099", kind: "Paper" },
+      { label: { en: "Android resume", zh: "Android 简历" }, href: asset("resumes/qicheng-chen-android.pdf"), kind: "Resume" },
     ],
   },
   {
-    title: "Amazon-M2 Multilingual Recommendation",
+    title: { en: "Amazon-M2 Multilingual Recommendation", zh: "Amazon-M2 多语言推荐研究" },
     track: "ai",
-    role: "Independent researcher",
+    role: { en: "Independent researcher", zh: "独立研究者" },
     period: "2024-2025",
-    summary:
-      "A first-author HCII 2025 Springer LNCS paper on next-item recommendation with LLMs, embeddings and session-based product data.",
+    summary: {
+      en: "A first-author HCII 2025 Springer LNCS paper on next-item recommendation with LLMs, embeddings and session-based product data.",
+      zh: "第一作者 HCII 2025 Springer LNCS 论文，研究基于 LLM、Embedding 和会话数据的下一商品推荐。",
+    },
     stack: ["Python", "OpenAI API", "Gemini API", "Embeddings", "scikit-learn", "PyTorch"],
-    demoState: "Add one result table image and a compact pipeline diagram from session data to top-k recommendation.",
+    image: asset("media/amazon-m2-paper.png"),
+    imageAlt: { en: "Springer Nature Link page for the Amazon-M2 paper", zh: "Amazon-M2 论文 Springer Nature Link 页面截图" },
+    mediaFit: "contain",
+    demoState: {
+      en: "Add one result table image and a compact pipeline diagram from session data to top-k recommendation.",
+      zh: "建议补一张结果表图，以及从会话数据到 top-k 推荐的简洁流程图。",
+    },
+    hideDemoNote: true,
     highlights: [
-      "Converted session-based recommendation into next-item embedding prediction and top-k item recall.",
-      "Compared Lasso, SVR, CNN, Transformer, GPT-4o-mini and Gemini approaches.",
-      "Reached MRR@100 0.6787 and Recall@100 0.9478 in experiments.",
-      "Published as first-author work in HCII 2025 Springer LNCS.",
+      {
+        en: "Converted session-based recommendation into next-item embedding prediction and top-k item recall.",
+        zh: "将会话推荐问题转化为下一商品 embedding 预测和 top-k 商品召回。",
+      },
+      {
+        en: "Compared Lasso, SVR, CNN, Transformer, GPT-4o-mini and Gemini approaches.",
+        zh: "比较 Lasso、SVR、CNN、Transformer、GPT-4o-mini 和 Gemini 等方法。",
+      },
+      {
+        en: "Reached MRR@100 0.6787 and Recall@100 0.9478 in experiments.",
+        zh: "实验达到 MRR@100 0.6787 和 Recall@100 0.9478。",
+      },
+      { en: "Published as first-author work in HCII 2025 Springer LNCS.", zh: "作为第一作者论文发表于 HCII 2025 Springer LNCS。" },
     ],
     links: [
-      { label: "Paper", href: "https://doi.org/10.1007/978-3-031-93828-3_13", kind: "Paper" },
-      { label: "AI resume", href: asset("resumes/qicheng-chen-ai-fullstack.pdf"), kind: "Resume" },
+      { label: { en: "Paper", zh: "论文" }, href: "https://doi.org/10.1007/978-3-031-93828-3_13", kind: "Paper" },
+      { label: { en: "AI resume", zh: "AI 简历" }, href: asset("resumes/qicheng-chen-ai-fullstack.pdf"), kind: "Resume" },
     ],
   },
   {
-    title: "GraphXR Data Source Integration",
+    title: { en: "GraphXR Data Source Integration", zh: "GraphXR 外部数据源集成 Demo" },
     track: "ai",
-    role: "Data visualization development intern",
+    role: { en: "Data visualization development intern", zh: "数据可视化开发实习生" },
     period: "2021-2022",
-    summary:
-      "Interactive Grove notebook demos that import Snowflake and Nebula Graph data into GraphXR for graph exploration and visual analysis.",
+    summary: {
+      en: "Interactive Grove notebook demos that import Snowflake and Nebula Graph data into GraphXR for graph exploration and visual analysis.",
+      zh: "基于 Grove notebook 的交互式 Demo，将 Snowflake 和 Nebula Graph 数据导入 GraphXR 进行图探索与可视化分析。",
+    },
     stack: ["JavaScript", "GraphXR API", "Snowflake", "Nebula Graph", "HTML", "CSS"],
-    image: asset("media/vr-task-system.png"),
-    imageAlt: "Graph-style data visualization screenshot",
-    demoState: "Add a screenshot or GIF of the Grove notebook importing data into the GraphXR canvas.",
+    image: asset("media/graphxr-nebulagraph.jpg"),
+    video: asset("media/GraphXR和NebulaGraph.mp4"),
+    imageAlt: { en: "Graph-style data visualization screenshot", zh: "图数据可视化截图" },
+    demoState: {
+      en: "Add a screenshot or GIF of the Grove notebook importing data into the GraphXR canvas.",
+      zh: "建议补 Grove notebook 将数据导入 GraphXR 画布的截图或 GIF。",
+    },
+    hideDemoNote: true,
     highlights: [
-      "Built input panels for connection parameters, graph spaces, categories and custom queries.",
-      "Parsed vertices, edges and attributes into GraphXR-compatible node and relationship structures.",
-      "Created graph nodes and edges on the visual canvas through GraphXR APIs.",
-      "Also supported the temporary company website with HTML/CSS/JavaScript and Ghost.",
+      {
+        en: "Built input panels for connection parameters, graph spaces, categories and custom queries.",
+        zh: "构建连接参数、graph space、类别和自定义查询输入面板。",
+      },
+      {
+        en: "Parsed vertices, edges and attributes into GraphXR-compatible node and relationship structures.",
+        zh: "将点、边和属性解析为 GraphXR 可用的节点与关系结构。",
+      },
+      { en: "Created graph nodes and edges on the visual canvas through GraphXR APIs.", zh: "通过 GraphXR API 在可视化画布中创建节点和边。" },
+      {
+        en: "Also supported the temporary company website with HTML/CSS/JavaScript and Ghost.",
+        zh: "同时参与临时公司官网的 HTML/CSS/JavaScript 和 Ghost 内容支持。",
+      },
     ],
     links: [
-      { label: "AI resume", href: asset("resumes/qicheng-chen-ai-fullstack.pdf"), kind: "Resume" },
+      { label: { en: "GraphXR demo", zh: "GraphXR 演示" }, href: asset("media/GraphXR和NebulaGraph.mp4"), kind: "Video" },
+      { label: { en: "AI resume", zh: "AI 简历" }, href: asset("resumes/qicheng-chen-ai-fullstack.pdf"), kind: "Resume" },
     ],
   },
   {
-    title: "Smart Campus Chatbot Mini Program Backend",
+    title: { en: "Smart Campus Chatbot Mini Program Backend", zh: "智能校园助手微信小程序后端" },
     track: "android",
-    role: "Backend developer in a 6-person team",
+    role: { en: "Backend developer in a 6-person team", zh: "6 人团队后端开发成员" },
     period: "2020-2021",
-    summary:
-      "A WeChat mini program backend for campus information chat, user settings, chat history and bot-generated responses.",
+    summary: {
+      en: "A WeChat mini program backend for campus information chat, user settings, chat history and bot-generated responses.",
+      zh: "面向校园信息查询的微信小程序后端，支持聊天、用户设置、历史记录和机器人回复生成。",
+    },
     stack: ["Python", "Django", "SQLite", "REST API", "ChatterBot", "WeChat Mini Program"],
-    demoState: "If kept on the site, add one screenshot of the chat page and one API diagram for the backend.",
+    demoState: {
+      en: "If kept on the site, add one screenshot of the chat page and one API diagram for the backend.",
+      zh: "如果保留在主页上，建议补聊天页截图和后端 API 流程图。",
+    },
     highlights: [
-      "Implemented chat-message saving, full history fetch, date search and clear-history endpoints.",
-      "Designed User and Chat models and serialized messages back to the mini program frontend.",
-      "Integrated ChatterBot response generation and stored bot replies with user messages.",
+      {
+        en: "Implemented chat-message saving, full history fetch, date search and clear-history endpoints.",
+        zh: "实现消息保存、完整历史查询、按日期搜索和清空历史记录接口。",
+      },
+      {
+        en: "Designed User and Chat models and serialized messages back to the mini program frontend.",
+        zh: "设计 User 和 Chat 数据模型，并将消息序列化返回给小程序前端。",
+      },
+      {
+        en: "Integrated ChatterBot response generation and stored bot replies with user messages.",
+        zh: "接入 ChatterBot 生成回复，并将机器人回复与用户消息一起持久化。",
+      },
     ],
-    links: [
-      { label: "Android resume", href: asset("resumes/qicheng-chen-android.pdf"), kind: "Resume" },
-    ],
+    links: [{ label: { en: "Android resume", zh: "Android 简历" }, href: asset("resumes/qicheng-chen-android.pdf"), kind: "Resume" }],
   },
 ];
 
-const proofItems = [
+const proofItems: { title: Localized; text: Localized }[] = [
   {
-    title: "Video",
-    text: "Short clips should prove the project in under one minute: run the app, show the key workflow, then show the result.",
+    title: { en: "Video", zh: "视频" },
+    text: {
+      en: "Short clips should prove the project in under one minute: run the app, show the key workflow, then show the result.",
+      zh: "短视频最好在一分钟内证明项目：运行应用、展示关键流程、给出结果。",
+    },
   },
   {
-    title: "Screenshot",
-    text: "Use screenshots for UI states, model outputs, GraphXR canvas views, UE4 tasks and Android screens.",
+    title: { en: "Screenshot", zh: "截图" },
+    text: {
+      en: "Use screenshots for UI states, model outputs, GraphXR canvas views, UE4 tasks and Android screens.",
+      zh: "截图适合展示 UI 状态、模型输出、GraphXR 画布、UE4 任务和 Android 页面。",
+    },
   },
   {
-    title: "Write-up",
-    text: "Each project can have a short page later: problem, role, architecture, hard part, result and what you would improve.",
+    title: { en: "Write-up", zh: "技术说明" },
+    text: {
+      en: "Each project can have a short page later: problem, role, architecture, hard part, result and what you would improve.",
+      zh: "后续每个项目可以补短文：问题、职责、架构、难点、结果和可改进点。",
+    },
   },
   {
-    title: "Link",
-    text: "Prefer stable links: PDF resumes, published papers, GitHub repositories, hosted demos and unlisted video URLs.",
+    title: { en: "Link", zh: "链接" },
+    text: {
+      en: "Prefer stable links: PDF resumes, published papers, GitHub repositories, hosted demos and unlisted video URLs.",
+      zh: "优先放稳定链接：PDF 简历、已发表论文、GitHub 仓库、在线 Demo 和公开视频链接。",
+    },
   },
 ];
 
 export default function Home() {
   const [activeTrack, setActiveTrack] = useState<TrackId>("all");
+  const [language, setLanguage] = useState<Language>("zh");
+  const [activeVideos, setActiveVideos] = useState<Record<string, string>>({});
+  const text = ui[language];
   const currentTrack = tracks.find((track) => track.id === activeTrack) ?? tracks[0];
 
   const visibleProjects = useMemo(() => {
@@ -281,42 +529,45 @@ export default function Home() {
         <a href="#top" className="brand-link">
           Qicheng Chen
         </a>
-        <div className="nav-links" aria-label="Primary navigation">
-          <a href="#projects">Projects</a>
-          <a href="#resumes">Resumes</a>
-          <a href="#demo-framework">Demo Framework</a>
-          <a href="#contact">Contact</a>
+        <div className="nav-actions">
+          <div className="nav-links" aria-label="Primary navigation">
+            <a href="#projects">{text.nav[0]}</a>
+            <a href="#resumes">{text.nav[1]}</a>
+            <a href="#demo-framework">{text.nav[2]}</a>
+            <a href="#contact">{text.nav[3]}</a>
+          </div>
+          <div className="language-toggle" aria-label="Language switcher">
+            <button className={language === "zh" ? "active" : ""} onClick={() => setLanguage("zh")} type="button">
+              中文
+            </button>
+            <button className={language === "en" ? "active" : ""} onClick={() => setLanguage("en")} type="button">
+              EN
+            </button>
+          </div>
         </div>
       </nav>
 
       <section id="top" className="hero-section">
         <div className="hero-copy">
-          <p className="eyebrow">Portfolio / Demo Hub</p>
-          <h1>AI applications, Android apps and VR simulation systems.</h1>
-          <p className="hero-lede">
-            Computer Science graduate with React/FastAPI AI projects, native Android work,
-            first-author research papers and UE4 VR interaction experience.
-          </p>
+          <p className="eyebrow">{text.eyebrow}</p>
+          <h1>{text.heroTitle}</h1>
+          <p className="hero-lede">{text.heroLead}</p>
           <div className="hero-actions">
             <a className="primary-action" href="#projects">
-              View Projects
+              {text.viewProjects}
             </a>
-            <a className="secondary-action" href={asset("resumes/qicheng-chen-ai-fullstack.pdf")} target="_blank" rel="noreferrer">
-              AI Resume
-            </a>
-            <a className="secondary-action" href={asset("resumes/qicheng-chen-android.pdf")} target="_blank" rel="noreferrer">
-              Android Resume
-            </a>
-            <a className="secondary-action" href={asset("resumes/qicheng-chen-game-vr.pdf")} target="_blank" rel="noreferrer">
-              Game / VR Resume
-            </a>
+            {resumes.map((resume) => (
+              <a className="secondary-action" href={resume.href} key={resume.href} target="_blank" rel="noreferrer">
+                {resume.title[language]}
+              </a>
+            ))}
           </div>
         </div>
         <figure className="hero-media">
-          <img src={asset("media/vr-port.png")} alt="UE4 VR port simulation screenshot" />
+          <img src={asset("media/vr-port.png")} alt={language === "en" ? "UE4 VR port simulation screenshot" : "UE4 VR 港口仿真截图"} />
           <figcaption>
-            <span>Featured Proof</span>
-            <strong>UE4 VR simulation demo material is ready to become the first video showcase.</strong>
+            <span>{text.featuredProof}</span>
+            <strong>{text.featuredProofText}</strong>
           </figcaption>
         </figure>
       </section>
@@ -329,88 +580,167 @@ export default function Home() {
             className={activeTrack === track.id ? "track-card active" : "track-card"}
             onClick={() => setActiveTrack(track.id)}
           >
-            <span>{track.label}</span>
-            <strong>{track.headline}</strong>
-            <p>{track.description}</p>
+            <span>{track.label[language]}</span>
+            <strong>{track.headline[language]}</strong>
+            <p>{track.description[language]}</p>
           </button>
         ))}
       </section>
 
       <section id="projects" className="content-section">
         <div className="section-heading">
-          <p>{currentTrack.label}</p>
-          <h2>Featured Projects</h2>
-          <span>{currentTrack.description}</span>
+          <p>{currentTrack.label[language]}</p>
+          <h2>{text.featuredProjects}</h2>
+          
         </div>
 
         <div className="project-list">
-          {visibleProjects.map((project) => (
-            <article className="project-card" key={project.title}>
-              <div className="project-media">
-                {project.image ? (
-                  <img src={project.image} alt={project.imageAlt ?? `${project.title} preview`} />
-                ) : (
-                  <div className="project-placeholder">
-                    <span>{project.track.toUpperCase()}</span>
-                    <strong>{project.title}</strong>
-                    <p>{project.demoState}</p>
+          {visibleProjects.map((project) => {
+            const projectKey = project.title.en;
+            const videoOptions = project.videos ?? (project.video ? [{ label: { en: "Demo Video", zh: "Demo 视频" }, src: project.video }] : []);
+            const activeVideo = activeVideos[projectKey] ?? videoOptions[0]?.src;
+            const activeVideoIndex = Math.max(
+              0,
+              videoOptions.findIndex((video) => video.src === activeVideo),
+            );
+            const previousVideo = videoOptions[(activeVideoIndex - 1 + videoOptions.length) % videoOptions.length];
+            const nextVideo = videoOptions[(activeVideoIndex + 1) % videoOptions.length];
+
+            return (
+              <article className="project-card" key={projectKey}>
+                <div className="project-media">
+                  {activeVideo ? (
+                    <>
+                      <video
+                        key={activeVideo}
+                        controls
+                        controlsList="nodownload"
+                        disablePictureInPicture
+                        onContextMenu={(event) => event.preventDefault()}
+                        preload="metadata"
+                        poster={project.image}
+                        aria-label={`${project.title[language]} demo video`}
+                      >
+                        <source src={activeVideo} type="video/mp4" />
+                        Your browser does not support the video tag.
+                      </video>
+                      {videoOptions.length > 1 ? (
+                        <>
+                          <button
+                            className="video-arrow previous"
+                            onClick={() =>
+                              setActiveVideos((current) => ({
+                                ...current,
+                                [projectKey]: previousVideo.src,
+                              }))
+                            }
+                            type="button"
+                            aria-label={`${language === "en" ? "Play previous video" : "播放上一个视频"}: ${previousVideo.label[language]}`}
+                          >
+                            ‹
+                          </button>
+                          <button
+                            className="video-arrow next"
+                            onClick={() =>
+                              setActiveVideos((current) => ({
+                                ...current,
+                                [projectKey]: nextVideo.src,
+                              }))
+                            }
+                            type="button"
+                            aria-label={`${language === "en" ? "Play next video" : "播放下一个视频"}: ${nextVideo.label[language]}`}
+                          >
+                            ›
+                          </button>
+                          <div className="video-status" aria-live="polite">
+                            {videoOptions[activeVideoIndex]?.label[language]}
+                          </div>
+                        </>
+                      ) : null}
+                    </>
+                  ) : project.image ? (
+                    <img
+                      className={project.mediaFit === "contain" ? "contain-media" : undefined}
+                      src={project.image}
+                      alt={project.imageAlt?.[language] ?? `${project.title[language]} preview`}
+                    />
+                  ) : (
+                    <div className="project-placeholder">
+                      <span>{project.track.toUpperCase()}</span>
+                      <strong>{project.title[language]}</strong>
+                      <p>{project.demoState[language]}</p>
+                    </div>
+                  )}
+                </div>
+                <div className="project-body">
+                  <div className="project-meta">
+                    <span>{project.role[language]}</span>
+                    <span>{project.period}</span>
                   </div>
-                )}
-              </div>
-              <div className="project-body">
-                <div className="project-meta">
-                  <span>{project.role}</span>
-                  <span>{project.period}</span>
+                  <h3>{project.title[language]}</h3>
+                  <p>{project.summary[language]}</p>
+                  <ul>
+                    {project.highlights.map((highlight) => (
+                      <li key={highlight.en}>{highlight[language]}</li>
+                    ))}
+                  </ul>
+                  <div className="stack-row">
+                    {project.stack.map((item) => (
+                      <span key={item}>{item}</span>
+                    ))}
+                  </div>
+                  {project.hideDemoNote ? null : (
+                    <div className="demo-note">
+                      <strong>{text.demoMaterial}</strong> {project.demoState[language]}
+                    </div>
+                  )}
+                  {project.demoAssets ? (
+                    <div className="demo-gallery" aria-label={`${project.title[language]} demo assets`}>
+                      {project.demoAssets.map((item) => (
+                        <a
+                          className={item.wide ? "wide" : undefined}
+                          href={item.src}
+                          key={item.src}
+                          target="_blank"
+                          rel="noreferrer"
+                        >
+                          <img src={item.src} alt={item.title[language]} loading="lazy" />
+                          <span>{item.title[language]}</span>
+                        </a>
+                      ))}
+                    </div>
+                  ) : null}
+                  <div className="link-row">
+                    {project.links.map((link) => (
+                      <a
+                        href={link.href}
+                        key={`${projectKey}-${link.label.en}`}
+                        target={link.href.startsWith("#") ? undefined : "_blank"}
+                        rel={link.href.startsWith("#") ? undefined : "noreferrer"}
+                      >
+                        {link.label[language]}
+                      </a>
+                    ))}
+                  </div>
                 </div>
-                <h3>{project.title}</h3>
-                <p>{project.summary}</p>
-                <ul>
-                  {project.highlights.map((highlight) => (
-                    <li key={highlight}>{highlight}</li>
-                  ))}
-                </ul>
-                <div className="stack-row">
-                  {project.stack.map((item) => (
-                    <span key={item}>{item}</span>
-                  ))}
-                </div>
-                <div className="demo-note">
-                  <strong>Demo material:</strong> {project.demoState}
-                </div>
-                <div className="link-row">
-                  {project.links.map((link) => (
-                    <a
-                      href={link.href}
-                      key={`${project.title}-${link.label}`}
-                      target={link.href.startsWith("#") ? undefined : "_blank"}
-                      rel={link.href.startsWith("#") ? undefined : "noreferrer"}
-                    >
-                      <span>{link.kind}</span>
-                      {link.label}
-                    </a>
-                  ))}
-                </div>
-              </div>
-            </article>
-          ))}
+              </article>
+            );
+          })}
         </div>
       </section>
 
       <section id="resumes" className="content-section">
         <div className="section-heading">
-          <p>Role-specific PDFs</p>
-          <h2>One Site, Three Resume Paths</h2>
-          <span>
-            I would keep one personal site instead of three separate websites. The filters, project ordering and
-            resume PDFs give each employer the version they need without splitting traffic across multiple URLs.
-          </span>
+          <p>{text.rolePdfs}</p>
+          <h2>{text.resumeSectionTitle}</h2>
+          <span>{text.resumeSectionText}</span>
         </div>
         <div className="resume-grid">
           {resumes.map((resume) => (
-            <a href={resume.href} className="resume-card" key={resume.title} target="_blank" rel="noreferrer">
+            <a href={resume.href} className="resume-card" key={resume.href} target="_blank" rel="noreferrer">
               <span>{resume.tag}</span>
-              <strong>{resume.title}</strong>
-              <p>{resume.fit}</p>
+              <strong>{resume.title[language]}</strong>
+              <p>{resume.fit[language]}</p>
             </a>
           ))}
         </div>
@@ -418,29 +748,26 @@ export default function Home() {
 
       <section id="demo-framework" className="demo-framework">
         <div className="section-heading compact">
-          <p>How Projects Should Be Shown</p>
-          <h2>Proof First, Resume Text Second</h2>
-          <span>
-            This site should not repeat the PDF line by line. It should show evidence: videos, screenshots, papers,
-            code links and short technical write-ups.
-          </span>
+          <p>{text.demoLabel}</p>
+          <h2>{text.demoTitle}</h2>
+          <span>{text.demoText}</span>
         </div>
         <div className="proof-grid">
           {proofItems.map((item) => (
-            <div className="proof-card" key={item.title}>
-              <strong>{item.title}</strong>
-              <p>{item.text}</p>
+            <div className="proof-card" key={item.title.en}>
+              <strong>{item.title[language]}</strong>
+              <p>{item.text[language]}</p>
             </div>
           ))}
         </div>
         <div className="demo-roadmap">
           <div>
-            <strong>Best next additions</strong>
-            <p>1. UE4 VR 30-60s video. 2. AI Q&A screen recording. 3. Android RecipeBook and MusicPlayer phone clips. 4. GraphXR screenshot/GIF.</p>
+            <strong>{text.bestNext}</strong>
+            <p>{text.bestNextText}</p>
           </div>
           <div>
-            <strong>Where to put links</strong>
-            <p>Each project card already has a link row. Replace the demo placeholders with GitHub, Bilibili/YouTube, hosted demo or paper links when ready.</p>
+            <strong>{text.linkPlacement}</strong>
+            <p>{text.linkPlacementText}</p>
           </div>
         </div>
       </section>
@@ -448,8 +775,8 @@ export default function Home() {
       <section id="contact" className="contact-section">
         <div>
           <p className="eyebrow">Contact</p>
-          <h2>Chen Qicheng</h2>
-          <span>Android / AI full-stack / Game and VR development</span>
+          <h2>{language === "en" ? "Chen Qicheng" : "陈起成"}</h2>
+          <span>{text.contactRole}</span>
         </div>
         <div className="contact-links">
           <a href="mailto:wharrison832@gmail.com">wharrison832@gmail.com</a>

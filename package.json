@@ -8,9 +8,9 @@
     "dev:client": "vite --host --port 3000",
     "dev": "pnpm dev:client",
     "build:client": "vite build --outDir dist/static",
-  "build": "rm -rf dist && pnpm build:client && cp package.json dist && touch dist/build.flag",
-  "deploy": "gh-pages -d dist/static -b gh-pages",
-  "predeploy": "pnpm run build && echo 'Build successful'"
+    "build": "vite build --outDir dist/static",
+    "deploy": "gh-pages -d dist/static -b gh-pages",
+    "predeploy": "npm run build && echo Build successful"
   },
   "dependencies": {
     "clsx": "^2.1.1",
