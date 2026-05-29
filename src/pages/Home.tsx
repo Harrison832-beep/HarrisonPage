@@ -353,6 +353,10 @@ const projects: Project[] = [
     image: asset("media/stress-paper.png"),
     imageAlt: { en: "Sensors paper page for the wearable stress recognition study", zh: "压力检测论文 Sensors 页面截图" },
     mediaFit: "contain",
+    mediaAssets: [
+      { title: { en: "Sensors paper", zh: "Sensors 论文" }, src: asset("media/stress-paper.png"), kind: "image" },
+      { title: { en: "Polar BLE collection", zh: "Polar BLE 采集" }, src: asset("media/polar-ble.png"), kind: "image" },
+    ],
     demoState: {
       en: "For the portfolio, show Polar BLE data collection plus one chart of filtered PPG/ECG/EEG signals.",
       zh: "主页上适合展示 Polar BLE 采集截图，以及一张滤波后的 PPG/ECG/EEG 信号图。",
