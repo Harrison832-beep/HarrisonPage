@@ -19,7 +19,7 @@ type DemoAsset = {
 
 type Project = {
   title: Localized;
-  track: Exclude<TrackId, "all">;
+  track: Exclude<TrackId, "all"> | Exclude<TrackId, "all">[];
   role: Localized;
   period: string;
   summary: Localized;
@@ -27,10 +27,12 @@ type Project = {
   image?: string;
   imageAlt?: Localized;
   mediaFit?: "cover" | "contain";
+  mediaAssets?: DemoAsset[];
   video?: string;
   videos?: { label: Localized; src: string; kind?: "video" | "image" }[];
   demoState: Localized;
   demoAssets?: DemoAsset[];
+  demoAssetDisplay?: "grid" | "carousel";
   hideDemoNote?: boolean;
   highlights: Localized[];
   links: ProjectLink[];
@@ -38,6 +40,7 @@ type Project = {
 
 const base = import.meta.env.BASE_URL;
 const asset = (path: string) => `${base}${path.replace(/^\//, "")}`;
+const projectTracks = (project: Project) => (Array.isArray(project.track) ? project.track : [project.track]);
 
 const ui = {
   en: {
@@ -170,20 +173,26 @@ const projects: Project[] = [
     title: { en: "AI Document Q&A System", zh: "AI 文档问答系统" },
     track: "ai",
     role: { en: "Independent full-stack developer", zh: "独立全栈开发" },
-    period: "2026",
+    period: "2026.03 - 2026.05",
     summary: {
-      en: "A React + FastAPI AI application that parses uploaded files, builds temporary retrieval indexes and answers questions through an LLM/RAG workflow.",
-      zh: "基于 React + FastAPI 的 AI 应用，支持上传文件解析、临时检索索引构建，并通过 LLM/RAG 流程回答问题。",
+      en: "A React + FastAPI AI chat assistant that parses uploaded files, builds temporary retrieval indexes and answers questions through an LLM/RAG workflow.",
+      zh: "基于 React + FastAPI 的 AI 聊天助手，支持上传文件解析、临时检索索引构建，并通过 LLM/RAG 流程回答问题。",
     },
     stack: ["React", "FastAPI", "LangGraph", "LangChain", "Kimi API", "Ollama", "RAG"],
+    video: asset("media/AI-Chat-assistant.mp4"),
     demoState: {
       en: "Needs a 60-90s screen recording: upload a file, ask a question, show retrieval and answer generation.",
       zh: "建议补 60-90 秒录屏：上传文件、提问、展示检索过程和回答生成。",
     },
+    hideDemoNote: true,
     highlights: [
       {
-        en: "Supports PDF, CSV, Excel, TXT and Markdown parsing with chunking and temporary vector search.",
-        zh: "支持 PDF、CSV、Excel、TXT、Markdown 解析，并进行切分和临时向量检索。",
+        en: "Supports PDF, CSV, Excel, TXT and Markdown upload parsing with chunking and temporary vector search.",
+        zh: "支持 PDF、CSV、Excel、TXT、Markdown 上传解析，并进行切分和临时向量检索。",
+      },
+      {
+        en: "FastAPI receives FormData uploads and exposes the /api/message endpoint for chat and RAG requests.",
+        zh: "FastAPI 处理 FormData 文件上传，并通过 /api/message 接口承载聊天与 RAG 请求。",
       },
       {
         en: "Uses Ollama embeddings and LangChain InMemoryVectorStore for top-k retrieval.",
@@ -193,14 +202,10 @@ const projects: Project[] = [
         en: "LangGraph decides whether to call retrieval before generating the final answer through Kimi API.",
         zh: "通过 LangGraph 判断是否需要调用检索，再使用 Kimi API 生成最终回答。",
       },
-      {
-        en: "FastAPI provides API routes and serves the React build for a local one-command demo.",
-        zh: "FastAPI 提供接口并托管 React 构建产物，支持本地一键运行 Demo。",
-      },
     ],
     links: [
       { label: { en: "AI resume", zh: "AI 简历" }, href: asset("resumes/qicheng-chen-ai-fullstack.pdf"), kind: "Resume" },
-      { label: { en: "Demo slot", zh: "Demo 占位" }, href: "#demo-framework", kind: "Demo" },
+      { label: { en: "AI chat demo", zh: "AI 聊天演示" }, href: asset("media/AI-Chat-assistant.mp4"), kind: "Video" },
     ],
   },
   {
@@ -231,6 +236,7 @@ const projects: Project[] = [
       { title: { en: "Turning", zh: "转向逻辑" }, src: asset("media/truck-rot.gif"), kind: "gif" },
       { title: { en: "Skip waiting", zh: "跳过等待" }, src: asset("media/truck-skip-waiting.gif"), kind: "gif" },
     ],
+    demoAssetDisplay: "grid",
     hideDemoNote: true,
     highlights: [
       {
@@ -336,14 +342,14 @@ const projects: Project[] = [
   },
   {
     title: { en: "Wearable Stress Recognition Study", zh: "可穿戴生理信号压力识别研究" },
-    track: "android",
+    track: ["ai", "android"],
     role: { en: "First author / mobile data collection developer", zh: "第一作者 / 移动端数据采集开发" },
-    period: "2022-2023",
+    period: "2022.06 - 2023.05",
     summary: {
       en: "A first-author Sensors paper using wearable PPG, ECG and EEG signals collected from university students for stress recognition.",
       zh: "第一作者 Sensors 论文，基于大学生实验采集的 PPG、ECG、EEG 生理信号进行压力识别。",
     },
-    stack: ["Kotlin", "Polar BLE SDK", "Python", "PyTorch", "PPG", "ECG", "EEG"],
+    stack: ["Python", "PyTorch", "Android/Kotlin", "Polar BLE SDK", "PPG", "ECG", "EEG"],
     image: asset("media/stress-paper.png"),
     imageAlt: { en: "Sensors paper page for the wearable stress recognition study", zh: "压力检测论文 Sensors 页面截图" },
     mediaFit: "contain",
@@ -366,6 +372,10 @@ const projects: Project[] = [
         en: "Compared CNN, Attention-LRCN, Self-Supervised CNN and StressNeXt models.",
         zh: "比较 CNN、Attention-LRCN、自监督 CNN 和 StressNeXt 等模型。",
       },
+      {
+        en: "Reached 93.42% accuracy / 88.11% F1 with ECG LRCN and 98.78% accuracy / 95.39% F1 with StressNeXt.",
+        zh: "ECG LRCN 达到 93.42% Accuracy / 88.11% F1，StressNeXt 达到 98.78% Accuracy / 95.39% F1。",
+      },
     ],
     links: [
       { label: { en: "Paper", zh: "论文" }, href: "https://doi.org/10.3390/s23136099", kind: "Paper" },
@@ -376,12 +386,12 @@ const projects: Project[] = [
     title: { en: "Amazon-M2 Multilingual Recommendation", zh: "Amazon-M2 多语言推荐研究" },
     track: "ai",
     role: { en: "Independent researcher", zh: "独立研究者" },
-    period: "2024-2025",
+    period: "2024.09 - 2024.12",
     summary: {
       en: "A first-author HCII 2025 Springer LNCS paper on next-item recommendation with LLMs, embeddings and session-based product data.",
       zh: "第一作者 HCII 2025 Springer LNCS 论文，研究基于 LLM、Embedding 和会话数据的下一商品推荐。",
     },
-    stack: ["Python", "OpenAI API", "Gemini API", "Embeddings", "scikit-learn", "PyTorch"],
+    stack: ["Python", "OpenAI API", "Gemini API", "Embedding", "scikit-learn", "PyTorch"],
     image: asset("media/amazon-m2-paper.png"),
     imageAlt: { en: "Springer Nature Link page for the Amazon-M2 paper", zh: "Amazon-M2 论文 Springer Nature Link 页面截图" },
     mediaFit: "contain",
@@ -396,8 +406,8 @@ const projects: Project[] = [
         zh: "将会话推荐问题转化为下一商品 embedding 预测和 top-k 商品召回。",
       },
       {
-        en: "Compared Lasso, SVR, CNN, Transformer, GPT-4o-mini and Gemini approaches.",
-        zh: "比较 Lasso、SVR、CNN、Transformer、GPT-4o-mini 和 Gemini 等方法。",
+        en: "Used Pandas batch preprocessing and compared Lasso, SVR, CNN, Transformer, GPT-4o-mini and Gemini approaches.",
+        zh: "使用 Pandas 进行批量预处理，并比较 Lasso、SVR、CNN、Transformer、GPT-4o-mini 和 Gemini 等方法。",
       },
       {
         en: "Reached MRR@100 0.6787 and Recall@100 0.9478 in experiments.",
@@ -414,7 +424,7 @@ const projects: Project[] = [
     title: { en: "GraphXR Data Source Integration", zh: "GraphXR 外部数据源集成 Demo" },
     track: "ai",
     role: { en: "Data visualization development intern", zh: "数据可视化开发实习生" },
-    period: "2021-2022",
+    period: "2021.06 - 2022.10",
     summary: {
       en: "Interactive Grove notebook demos that import Snowflake and Nebula Graph data into GraphXR for graph exploration and visual analysis.",
       zh: "基于 Grove notebook 的交互式 Demo，将 Snowflake 和 Nebula Graph 数据导入 GraphXR 进行图探索与可视化分析。",
@@ -430,12 +440,12 @@ const projects: Project[] = [
     hideDemoNote: true,
     highlights: [
       {
-        en: "Built input panels for connection parameters, graph spaces, categories and custom queries.",
-        zh: "构建连接参数、graph space、类别和自定义查询输入面板。",
+        en: "Built Grove notebook demos and Observable-style input panels for connection parameters, graph spaces and custom queries.",
+        zh: "开发 Grove notebook demo 和 Observable 风格输入面板，支持连接参数、graph space 和自定义查询配置。",
       },
       {
-        en: "Parsed vertices, edges and attributes into GraphXR-compatible node and relationship structures.",
-        zh: "将点、边和属性解析为 GraphXR 可用的节点与关系结构。",
+        en: "Called Nebula Graph / Snowflake APIs through fetch and parsed vertices, edges and attributes into GraphXR structures.",
+        zh: "通过 fetch 调用 Nebula Graph / Snowflake API，并将点、边和属性解析为 GraphXR 可用结构。",
       },
       { en: "Created graph nodes and edges on the visual canvas through GraphXR APIs.", zh: "通过 GraphXR API 在可视化画布中创建节点和边。" },
       {
@@ -452,16 +462,33 @@ const projects: Project[] = [
     title: { en: "Smart Campus Chatbot Mini Program Backend", zh: "智能校园助手微信小程序后端" },
     track: "android",
     role: { en: "Backend developer in a 6-person team", zh: "6 人团队后端开发成员" },
-    period: "2020-2021",
+    period: "2020.10 - 2021.05",
     summary: {
       en: "A WeChat mini program backend for campus information chat, user settings, chat history and bot-generated responses.",
       zh: "面向校园信息查询的微信小程序后端，支持聊天、用户设置、历史记录和机器人回复生成。",
     },
     stack: ["Python", "Django", "SQLite", "REST API", "ChatterBot", "WeChat Mini Program"],
+    image: asset("media/smart-campus/chat-text-message.png"),
+    imageAlt: { en: "Smart Campus chatbot chat interface screenshot", zh: "智能校园助手聊天界面截图" },
+    mediaFit: "contain",
+    mediaAssets: [
+      { title: { en: "Project poster", zh: "项目海报" }, src: asset("media/smart-campus/poster-open-day.png"), kind: "image" },
+      { title: { en: "Chat home", zh: "聊天首页" }, src: asset("media/smart-campus/chat-home.png"), kind: "image" },
+      { title: { en: "Text chat", zh: "文本聊天" }, src: asset("media/smart-campus/chat-text-message.png"), kind: "image" },
+      { title: { en: "Voice chat", zh: "语音聊天" }, src: asset("media/smart-campus/chat-voice-message.png"), kind: "image" },
+      { title: { en: "Settings page", zh: "设置页面" }, src: asset("media/smart-campus/settings-page.png"), kind: "image" },
+      { title: { en: "Font color picker", zh: "字体颜色选择" }, src: asset("media/smart-campus/font-color-picker.png"), kind: "image" },
+      { title: { en: "Green theme", zh: "绿色主题" }, src: asset("media/smart-campus/green-theme-chat.png"), kind: "image" },
+      { title: { en: "Use case diagram", zh: "用例图" }, src: asset("media/smart-campus/use-case-diagram.png"), kind: "image" },
+      { title: { en: "Activity diagram", zh: "活动图" }, src: asset("media/smart-campus/activity-diagram.png"), kind: "image" },
+      { title: { en: "Sequence diagram", zh: "时序图" }, src: asset("media/smart-campus/sequence-diagram.png"), kind: "image" },
+      { title: { en: "Class diagram", zh: "类图" }, src: asset("media/smart-campus/class-diagram.png"), kind: "image" },
+    ],
     demoState: {
-      en: "If kept on the site, add one screenshot of the chat page and one API diagram for the backend.",
-      zh: "如果保留在主页上，建议补聊天页截图和后端 API 流程图。",
+      en: "Screenshots and design diagrams show the chat flow, settings customization and backend response design.",
+      zh: "截图和设计图展示聊天流程、设置项定制，以及后端回复生成设计。",
     },
+    hideDemoNote: true,
     highlights: [
       {
         en: "Implemented chat-message saving, full history fetch, date search and clear-history endpoints.",
@@ -515,12 +542,13 @@ export default function Home() {
   const [activeTrack, setActiveTrack] = useState<TrackId>("all");
   const [language, setLanguage] = useState<Language>("zh");
   const [activeVideos, setActiveVideos] = useState<Record<string, string>>({});
+  const [activeDemoAssets, setActiveDemoAssets] = useState<Record<string, number>>({});
   const text = ui[language];
   const currentTrack = tracks.find((track) => track.id === activeTrack) ?? tracks[0];
 
   const visibleProjects = useMemo(() => {
     if (activeTrack === "all") return projects;
-    return projects.filter((project) => project.track === activeTrack);
+    return projects.filter((project) => projectTracks(project).includes(activeTrack));
   }, [activeTrack]);
 
   return (
@@ -597,7 +625,15 @@ export default function Home() {
         <div className="project-list">
           {visibleProjects.map((project) => {
             const projectKey = project.title.en;
-            const mediaOptions = project.videos ?? (project.video ? [{ label: { en: "Demo Video", zh: "Demo 视频" }, src: project.video }] : []);
+            const mediaOptions =
+              project.videos ??
+              (project.video
+                ? [{ label: { en: "Demo Video", zh: "Demo 视频" }, src: project.video }]
+                : project.mediaAssets?.map((assetItem) => ({
+                    label: assetItem.title,
+                    src: assetItem.src,
+                    kind: "image" as const,
+                  })) ?? []);
             const activeMediaSrc = activeVideos[projectKey] ?? mediaOptions[0]?.src;
             const activeMediaIndex = Math.max(
               0,
@@ -606,12 +642,15 @@ export default function Home() {
             const activeMedia = mediaOptions[activeMediaIndex];
             const previousMedia = mediaOptions[(activeMediaIndex - 1 + mediaOptions.length) % mediaOptions.length];
             const nextMedia = mediaOptions[(activeMediaIndex + 1) % mediaOptions.length];
+            const demoAssetIndex = activeDemoAssets[projectKey] ?? 0;
+            const activeDemoAsset = project.demoAssets?.[demoAssetIndex];
 
             return (
               <article className="project-card" key={projectKey}>
-                <div className="project-media">
+                <div className={project.mediaAssets ? "project-media fixed-media" : "project-media"}>
                   {activeMediaSrc ? (
-                    <>
+                    <div className="media-carousel">
+                      <div className="media-frame">
                       {activeMedia?.kind === "image" ? (
                         <img className="fit-contain-media" src={activeMediaSrc} alt={activeMedia.label[language]} />
                       ) : (
@@ -629,6 +668,7 @@ export default function Home() {
                           Your browser does not support the video tag.
                         </video>
                       )}
+                      </div>
                       {mediaOptions.length > 1 ? (
                         <>
                           <button
@@ -657,12 +697,15 @@ export default function Home() {
                           >
                             ›
                           </button>
-                          <div className="video-status" aria-live="polite">
-                            {mediaOptions[activeMediaIndex]?.label[language]}
+                          <div className="media-status" aria-live="polite">
+                            <span>{mediaOptions[activeMediaIndex]?.label[language]}</span>
+                            <strong>
+                              {activeMediaIndex + 1} / {mediaOptions.length}
+                            </strong>
                           </div>
                         </>
                       ) : null}
-                    </>
+                    </div>
                   ) : project.image ? (
                     <img
                       className={project.mediaFit === "contain" ? "contain-media" : undefined}
@@ -671,7 +714,7 @@ export default function Home() {
                     />
                   ) : (
                     <div className="project-placeholder">
-                      <span>{project.track.toUpperCase()}</span>
+                      <span>{projectTracks(project).join(" / ").toUpperCase()}</span>
                       <strong>{project.title[language]}</strong>
                       <p>{project.demoState[language]}</p>
                     </div>
@@ -699,7 +742,7 @@ export default function Home() {
                       <strong>{text.demoMaterial}</strong> {project.demoState[language]}
                     </div>
                   )}
-                  {project.demoAssets ? (
+                  {project.demoAssets && project.demoAssetDisplay === "grid" ? (
                     <div className="demo-gallery" aria-label={`${project.title[language]} demo assets`}>
                       {project.demoAssets.map((item) => (
                         <a
@@ -713,6 +756,49 @@ export default function Home() {
                           <span>{item.title[language]}</span>
                         </a>
                       ))}
+                    </div>
+                  ) : null}
+                  {project.demoAssets && project.demoAssetDisplay !== "grid" ? (
+                    <div className="demo-carousel" aria-label={`${project.title[language]} demo assets`}>
+                      <a href={activeDemoAsset?.src} target="_blank" rel="noreferrer">
+                        <img src={activeDemoAsset?.src} alt={activeDemoAsset?.title[language]} loading="lazy" />
+                      </a>
+                      {project.demoAssets.length > 1 ? (
+                        <>
+                          <button
+                            className="demo-carousel-arrow previous"
+                            onClick={() =>
+                              setActiveDemoAssets((current) => ({
+                                ...current,
+                                [projectKey]: (demoAssetIndex - 1 + project.demoAssets!.length) % project.demoAssets!.length,
+                              }))
+                            }
+                            type="button"
+                            aria-label={language === "en" ? "Previous image" : "上一张图片"}
+                          >
+                            ‹
+                          </button>
+                          <button
+                            className="demo-carousel-arrow next"
+                            onClick={() =>
+                              setActiveDemoAssets((current) => ({
+                                ...current,
+                                [projectKey]: (demoAssetIndex + 1) % project.demoAssets!.length,
+                              }))
+                            }
+                            type="button"
+                            aria-label={language === "en" ? "Next image" : "下一张图片"}
+                          >
+                            ›
+                          </button>
+                        </>
+                      ) : null}
+                      <div className="demo-carousel-caption">
+                        <span>{activeDemoAsset?.title[language]}</span>
+                        <strong>
+                          {demoAssetIndex + 1} / {project.demoAssets.length}
+                        </strong>
+                      </div>
                     </div>
                   ) : null}
                   <div className="link-row">
