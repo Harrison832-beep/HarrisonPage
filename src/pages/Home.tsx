@@ -27,6 +27,7 @@ type Project = {
   image?: string;
   imageAlt?: Localized;
   mediaFit?: "cover" | "contain";
+  fixedMedia?: boolean;
   mediaAssets?: DemoAsset[];
   video?: string;
   videos?: { label: Localized; src: string; kind?: "video" | "image" }[];
@@ -121,10 +122,10 @@ const tracks: { id: TrackId; label: Localized; headline: Localized; description:
   {
     id: "android",
     label: { en: "Android", zh: "Android 客户端" },
-    headline: { en: "Native Android apps, media playback and BLE data collection.", zh: "原生 Android 应用、媒体播放与 BLE 数据采集。" },
+    headline: { en: "Modern Android apps, media playback and BLE data collection.", zh: "现代 Android 应用、媒体播放与 BLE 数据采集。" },
     description: {
-      en: "Java/Kotlin Android work covering Activity, Service, ContentProvider, RecyclerView, MediaPlayer, permissions and sensor data capture.",
-      zh: "覆盖 Activity、Service、ContentProvider、RecyclerView、MediaPlayer、权限适配和传感器数据采集。",
+      en: "Kotlin/Java Android work covering Jetpack Compose, Room, MVVM, StateFlow, Service, MediaPlayer, permissions and sensor data capture.",
+      zh: "覆盖 Kotlin/Java、Jetpack Compose、Room、MVVM、StateFlow、Service、MediaPlayer、权限适配和传感器数据采集。",
     },
   },
   {
@@ -151,10 +152,10 @@ const resumes = [
   {
     title: { en: "Android Resume", zh: "Android 客户端简历" },
     href: asset("resumes/qicheng-chen-android.pdf"),
-    tag: "Java / Kotlin / Android SDK",
+    tag: "Kotlin / Jetpack Compose / Room",
     fit: {
-      en: "For Android, client-side development, mobile app and sensor data collection roles.",
-      zh: "用于 Android、客户端开发、移动应用和传感器数据采集相关岗位。",
+      en: "For Android, mobile client, Jetpack Compose, media playback and sensor data collection roles.",
+      zh: "用于 Android、移动客户端、Jetpack Compose、媒体播放和传感器数据采集相关岗位。",
     },
   },
   {
@@ -263,42 +264,49 @@ const projects: Project[] = [
     ],
   },
   {
-    title: { en: "Android Recipe Book", zh: "Android 食谱管理应用" },
+    title: { en: "Android Recipe Book Modernization", zh: "食谱管理 Android 应用重构" },
     track: "android",
     role: { en: "Independent Android developer", zh: "独立 Android 开发" },
-    period: "2022",
+    period: "2026.05",
     summary: {
-      en: "A native Android recipe manager with local persistence, multi-Activity flows, dynamic recipe forms, image selection and cooking video playback.",
-      zh: "原生 Android 食谱管理应用，支持本地持久化、多 Activity 流程、动态表单、图片选择和烹饪视频播放。",
+      en: "A modernized Android recipe manager rebuilt from Java/XML/SQLite into Kotlin, Jetpack Compose, Room and MVVM while preserving recipe creation, media display and list/detail flows.",
+      zh: "将旧版 Java/XML/SQLite 食谱应用重构为 Kotlin、Jetpack Compose、Room 与 MVVM 架构，保留食谱创建、媒体展示和列表/详情核心流程。",
     },
-    stack: ["Java", "Android SDK", "SQLite", "ContentProvider", "RecyclerView", "VideoView"],
+    stack: ["Kotlin", "Jetpack Compose", "Room", "MVVM", "StateFlow", "Material3", "VideoView"],
     image: asset("media/recipe-book.jpg"),
+    video: asset("media/RecipeBook.mp4"),
+    fixedMedia: true,
     imageAlt: { en: "Android Recipe Book app screenshot", zh: "Android 食谱管理应用截图" },
     demoState: {
-      en: "Add a short phone recording: create recipe, choose image/video, rate recipe and delete from the list.",
-      zh: "建议补手机录屏：创建食谱、选择图片/视频、评分、列表删除。",
+      en: "Phone recording shows the rebuilt Compose UI, recipe list/detail flow, media display and deletion interaction.",
+      zh: "手机录屏展示重构后的 Compose 界面、食谱列表/详情流程、媒体展示和删除交互。",
     },
+    hideDemoNote: true,
     highlights: [
       {
-        en: "SQLite + ContentProvider storage layer accessed through ContentResolver for CRUD operations.",
-        zh: "使用 SQLite + ContentProvider 封装本地存储层，通过 ContentResolver 完成增删改查。",
+        en: "Rebuilt the original Java + XML View + SQLite/ContentProvider implementation into Kotlin + Jetpack Compose + Room.",
+        zh: "将原 Java + XML View + SQLite/ContentProvider 版本重构为 Kotlin + Jetpack Compose + Room 架构。",
       },
       {
-        en: "RecyclerView + Adapter renders recipe cards with rating, image preview, deletion and detail navigation.",
-        zh: "基于 RecyclerView + Adapter 渲染食谱卡片，支持评分、图片预览、删除和详情跳转。",
+        en: "Designed Recipe and Ingredient Room tables with foreign-key relationships and cascading deletion.",
+        zh: "使用 Room 设计 Recipe / Ingredient 双表结构，通过外键关联食谱与食材并支持级联删除。",
       },
       {
-        en: "Dynamic ingredient form collects variable-length fields and stores structured recipe content.",
-        zh: "动态食材表单支持变长输入，并保存结构化食谱内容。",
+        en: "Used DAO, Repository, ViewModel and StateFlow to manage local data, UI state and screen updates.",
+        zh: "基于 DAO、Repository、ViewModel 和 StateFlow 管理本地数据、UI 状态与页面更新。",
       },
       {
-        en: "Handles image/video URI selection and Android 13 media read permissions.",
-        zh: "处理图片/视频 URI 选择，并适配 Android 13 媒体读取权限。",
+        en: "Implemented dynamic ingredient forms, image/video URI selection, persisted URI permissions, Coil image loading and VideoView playback.",
+        zh: "实现动态食材表单、图片/视频 URI 选择、持久化 URI 权限保存、Coil 图片加载和 VideoView 播放。",
+      },
+      {
+        en: "Built LazyColumn recipe cards, card navigation and SwipeToDismiss deletion to improve the app workflow.",
+        zh: "在列表页实现 LazyColumn 食谱卡片、点击跳转和 SwipeToDismiss 删除交互，提升操作体验。",
       },
     ],
     links: [
       { label: { en: "Android resume", zh: "Android 简历" }, href: asset("resumes/qicheng-chen-android.pdf"), kind: "Resume" },
-      { label: { en: "Demo slot", zh: "Demo 占位" }, href: "#demo-framework", kind: "Demo" },
+      { label: { en: "RecipeBook demo", zh: "RecipeBook 演示" }, href: asset("media/RecipeBook.mp4"), kind: "Video" },
     ],
   },
   {
@@ -651,7 +659,7 @@ export default function Home() {
 
             return (
               <article className="project-card" key={projectKey}>
-                <div className={project.mediaAssets ? "project-media fixed-media" : "project-media"}>
+                <div className={project.mediaAssets || project.fixedMedia ? "project-media fixed-media" : "project-media"}>
                   {activeMediaSrc ? (
                     <div className="media-carousel">
                       <div className="media-frame">
