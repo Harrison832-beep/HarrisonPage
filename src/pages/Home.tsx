@@ -45,56 +45,26 @@ const projectTracks = (project: Project) => (Array.isArray(project.track) ? proj
 
 const ui = {
   en: {
-    nav: ["Projects", "Resumes", "Demo Framework", "Contact"],
+    nav: ["Projects", "Resumes", "Contact"],
     eyebrow: "Portfolio / Demo Hub",
     heroTitle: "AI applications, Android apps and VR simulation systems.",
     heroLead:
       "Computer Science graduate with React/FastAPI AI projects, native Android work, first-author research papers and UE4 VR interaction experience.",
     viewProjects: "View Projects",
-    featuredProof: "Featured Proof",
-    featuredProofText: "UE4 VR simulation demo material is ready to become the first video showcase.",
     featuredProjects: "Featured Projects",
     rolePdfs: "Role-specific PDFs",
     resumeSectionTitle: "One Site, Three Resume Paths",
-    resumeSectionText:
-      "I would keep one personal site instead of three separate websites. The filters, project ordering and resume PDFs give each employer the version they need without splitting traffic across multiple URLs.",
-    demoLabel: "How Projects Should Be Shown",
-    demoTitle: "Proof First, Resume Text Second",
-    demoText:
-      "This site should not repeat the PDF line by line. It should show evidence: videos, screenshots, papers, code links and short technical write-ups.",
-    bestNext: "Best next additions",
-    bestNextText:
-      "1. UE4 VR 30-60s video. 2. AI Q&A screen recording. 3. Android RecipeBook and MusicPlayer phone clips. 4. GraphXR screenshot/GIF.",
-    linkPlacement: "Where to put links",
-    linkPlacementText:
-      "Each project card already has a link row. Replace the demo placeholders with GitHub, Bilibili/YouTube, hosted demo or paper links when ready.",
     demoMaterial: "Demo material:",
     contactRole: "Android / AI full-stack / Game and VR development",
   },
   zh: {
-    nav: ["项目", "简历", "展示框架", "联系"],
+    nav: ["项目展示", "简历", "联系方式"],
     eyebrow: "作品集 / Demo Hub",
-    heroTitle: "AI 应用、Android 客户端与 VR 仿真项目展示。",
+    heroTitle: "个人项目/作品",
     heroLead:
       "计算机科学背景，项目覆盖 React/FastAPI AI 应用、原生 Android、第一作者论文，以及 UE4 VR 交互仿真。",
     viewProjects: "查看项目",
-    featuredProof: "重点展示",
-    featuredProofText: "UE4 港口物流 VR 项目已经有视频素材，可以作为主页里最优先展示的 Demo。",
-    featuredProjects: "重点项目",
-    rolePdfs: "分方向简历 PDF",
-    resumeSectionTitle: "一个主页，三条投递路径",
-    resumeSectionText:
-      "建议保留一个个人主页，而不是拆成三个网站。通过方向筛选、项目排序和三份 PDF 简历，让不同岗位的面试官看到对应版本。",
-    demoLabel: "项目应该怎么展示",
-    demoTitle: "先展示证据，再补简历文字",
-    demoText:
-      "个人主页不要只是复刻简历。更适合展示视频、截图、论文、代码链接，以及简短的技术说明。",
-    bestNext: "下一步最值得补的内容",
-    bestNextText:
-      "1. UE4 VR 30-60 秒视频。2. AI 问答项目录屏。3. RecipeBook 和 MusicPlayer 手机录屏。4. GraphXR 截图或 GIF。",
-    linkPlacement: "链接应该放在哪里",
-    linkPlacementText:
-      "每个项目卡片已经有链接区域。后续可以替换为 GitHub、Bilibili/YouTube、在线 Demo 或论文链接。",
+    resumeSectionTitle: "个人简历",
     demoMaterial: "Demo 素材：",
     contactRole: "Android / AI 全栈 / 游戏与 VR 开发",
   },
@@ -104,16 +74,16 @@ const tracks: { id: TrackId; label: Localized; headline: Localized; description:
   {
     id: "all",
     label: { en: "All Work", zh: "全部项目" },
-    headline: { en: "One portfolio, three role stories.", zh: "一个主页，承载三种岗位叙事。" },
+    headline: { en: "One portfolio, three role stories.", zh: "所有项目" },
     description: {
-      en: "A single GitHub Pages site works better than three separate sites: recruiters get one URL, while filters and PDF resumes change the story for each role.",
-      zh: "比起做三个网站，一个 GitHub Pages 主页更稳妥：投递时只发一个链接，再用筛选和简历 PDF 区分不同岗位方向。",
+      en: "All projects and demos",
+      zh: "所有项目经历以及Demo",
     },
   },
   {
     id: "ai",
     label: { en: "AI Full-stack", zh: "AI 全栈" },
-    headline: { en: "AI applications, RAG systems and published ML research.", zh: "AI 应用、RAG 系统与已发表机器学习研究。" },
+    headline: { en: "AI applications, RAG systems and published ML research.", zh: "AI 应用、RAG 系统与已发表机器学习相关研究" },
     description: {
       en: "React/FastAPI projects, LLM workflows, recommendation experiments and first-author research papers.",
       zh: "突出 React/FastAPI、LLM 工作流、推荐实验和第一作者论文，适合 AI 应用开发与 Python 后端方向。",
@@ -145,8 +115,8 @@ const resumes = [
     href: asset("resumes/qicheng-chen-ai-fullstack.pdf"),
     tag: "React / FastAPI / LLM",
     fit: {
-      en: "For AI application development, Python backend, RAG and data/ML-adjacent full-stack roles.",
-      zh: "用于 AI 应用开发、Python 后端、RAG、数据/ML 相关全栈岗位。",
+      en: "AI application, Python backend, RAG and data/ML-adjacent full-stack",
+      zh: "AI应用开发、Python后端、RAG、数据/ML",
     },
   },
   {
@@ -154,8 +124,8 @@ const resumes = [
     href: asset("resumes/qicheng-chen-android.pdf"),
     tag: "Kotlin / Jetpack Compose / Room",
     fit: {
-      en: "For Android, mobile client, Jetpack Compose, media playback and sensor data collection roles.",
-      zh: "用于 Android、移动客户端、Jetpack Compose、媒体播放和传感器数据采集相关岗位。",
+      en: "Android, mobile client, Jetpack Compose, media playback and sensor data collection",
+      zh: "Android、移动客户端、Jetpack Compose、媒体播放和传感器数据采集",
     },
   },
   {
@@ -163,8 +133,8 @@ const resumes = [
     href: asset("resumes/qicheng-chen-game-vr.pdf"),
     tag: "UE4 / Blueprint / VR",
     fit: {
-      en: "For UE4, VR interaction, gameplay programming and simulation development roles.",
-      zh: "用于 UE4、VR 交互、Gameplay 编程和仿真开发岗位。",
+      en: "UE4, VR interaction, gameplay programming and simulation development",
+      zh: "UE4、VR交互、Gameplay 编程和仿真开发",
     },
   },
 ];
@@ -273,7 +243,7 @@ const projects: Project[] = [
       zh: "将旧版 Java/XML/SQLite 食谱应用重构为 Kotlin、Jetpack Compose、Room 与 MVVM 架构，保留食谱创建、媒体展示和列表/详情核心流程。",
     },
     stack: ["Kotlin", "Jetpack Compose", "Room", "MVVM", "StateFlow", "Material3", "VideoView"],
-    image: asset("media/recipe-book.jpg"),
+
     video: asset("media/RecipeBook.mp4"),
     fixedMedia: true,
     imageAlt: { en: "Android Recipe Book app screenshot", zh: "Android 食谱管理应用截图" },
@@ -519,44 +489,51 @@ const projects: Project[] = [
   },
 ];
 
-const proofItems: { title: Localized; text: Localized }[] = [
+const heroImages: { src: string; alt: Localized }[] = [
   {
-    title: { en: "Video", zh: "视频" },
-    text: {
-      en: "Short clips should prove the project in under one minute: run the app, show the key workflow, then show the result.",
-      zh: "短视频最好在一分钟内证明项目：运行应用、展示关键流程、给出结果。",
-    },
+    src: asset("media/ai-chat-assistant.jpg"),
+    alt: { en: "AI document Q&A assistant demo screenshot", zh: "AI 文档问答助手演示截图" },
   },
   {
-    title: { en: "Screenshot", zh: "截图" },
-    text: {
-      en: "Use screenshots for UI states, model outputs, GraphXR canvas views, UE4 tasks and Android screens.",
-      zh: "截图适合展示 UI 状态、模型输出、GraphXR 画布、UE4 任务和 Android 页面。",
-    },
+    src: asset("media/vr-port.png"),
+    alt: { en: "UE4 VR port simulation screenshot", zh: "UE4 VR 港口仿真截图" },
   },
   {
-    title: { en: "Write-up", zh: "技术说明" },
-    text: {
-      en: "Each project can have a short page later: problem, role, architecture, hard part, result and what you would improve.",
-      zh: "后续每个项目可以补短文：问题、职责、架构、难点、结果和可改进点。",
-    },
+    src: asset("media/recipe-book.png"),
+    alt: { en: "Android RecipeBook app screenshot", zh: "Android RecipeBook 应用截图" },
   },
   {
-    title: { en: "Link", zh: "链接" },
-    text: {
-      en: "Prefer stable links: PDF resumes, published papers, GitHub repositories, hosted demos and unlisted video URLs.",
-      zh: "优先放稳定链接：PDF 简历、已发表论文、GitHub 仓库、在线 Demo 和公开视频链接。",
-    },
+    src: asset("media/music-player.jpg"),
+    alt: { en: "Android Music Player app screenshot", zh: "Android 音乐播放器应用截图" },
+  },
+  {
+    src: asset("media/stress-paper.png"),
+    alt: { en: "Wearable stress recognition paper screenshot", zh: "可穿戴压力识别论文截图" },
+  },
+  {
+    src: asset("media/amazon-m2-paper.png"),
+    alt: { en: "Amazon-M2 recommendation paper screenshot", zh: "Amazon-M2 推荐论文截图" },
+  },
+  {
+    src: asset("media/graphxr-nebulagraph.jpg"),
+    alt: { en: "GraphXR Nebula Graph demo screenshot", zh: "GraphXR Nebula Graph 演示截图" },
+  },
+  {
+    src: asset("media/smart-campus/chat-text-message.png"),
+    alt: { en: "Smart Campus chatbot screenshot", zh: "智能校园助手聊天界面截图" },
   },
 ];
+
 
 export default function Home() {
   const [activeTrack, setActiveTrack] = useState<TrackId>("all");
   const [language, setLanguage] = useState<Language>("zh");
   const [activeVideos, setActiveVideos] = useState<Record<string, string>>({});
   const [activeDemoAssets, setActiveDemoAssets] = useState<Record<string, number>>({});
+  const [activeHeroImage, setActiveHeroImage] = useState(0);
   const text = ui[language];
   const currentTrack = tracks.find((track) => track.id === activeTrack) ?? tracks[0];
+  const heroImage = heroImages[activeHeroImage];
 
   const visibleProjects = useMemo(() => {
     if (activeTrack === "all") return projects;
@@ -573,8 +550,7 @@ export default function Home() {
           <div className="nav-links" aria-label="Primary navigation">
             <a href="#projects">{text.nav[0]}</a>
             <a href="#resumes">{text.nav[1]}</a>
-            <a href="#demo-framework">{text.nav[2]}</a>
-            <a href="#contact">{text.nav[3]}</a>
+            <a href="#contact">{text.nav[2]}</a>
           </div>
           <div className="language-toggle" aria-label="Language switcher">
             <button className={language === "zh" ? "active" : ""} onClick={() => setLanguage("zh")} type="button">
@@ -589,6 +565,7 @@ export default function Home() {
 
       <section id="top" className="hero-section">
         <div className="hero-copy">
+          
           <p className="eyebrow">{text.eyebrow}</p>
           <h1>{text.heroTitle}</h1>
           <p className="hero-lede">{text.heroLead}</p>
@@ -604,11 +581,23 @@ export default function Home() {
           </div>
         </div>
         <figure className="hero-media">
-          <img src={asset("media/vr-port.png")} alt={language === "en" ? "UE4 VR port simulation screenshot" : "UE4 VR 港口仿真截图"} />
-          <figcaption>
-            <span>{text.featuredProof}</span>
-            <strong>{text.featuredProofText}</strong>
-          </figcaption>
+          <img src={heroImage.src} alt={heroImage.alt[language]} />
+          <button
+            className="hero-image-arrow previous"
+            onClick={() => setActiveHeroImage((current) => (current - 1 + heroImages.length) % heroImages.length)}
+            type="button"
+            aria-label={language === "en" ? "Previous project image" : "上一张项目图片"}
+          >
+            ‹
+          </button>
+          <button
+            className="hero-image-arrow next"
+            onClick={() => setActiveHeroImage((current) => (current + 1) % heroImages.length)}
+            type="button"
+            aria-label={language === "en" ? "Next project image" : "下一张项目图片"}
+          >
+            ›
+          </button>
         </figure>
       </section>
 
@@ -620,7 +609,6 @@ export default function Home() {
             className={activeTrack === track.id ? "track-card active" : "track-card"}
             onClick={() => setActiveTrack(track.id)}
           >
-            <span>{track.label[language]}</span>
             <strong>{track.headline[language]}</strong>
             <p>{track.description[language]}</p>
           </button>
@@ -630,7 +618,6 @@ export default function Home() {
       <section id="projects" className="content-section">
         <div className="section-heading">
           <p>{currentTrack.label[language]}</p>
-          <h2>{text.featuredProjects}</h2>
           
         </div>
 
@@ -834,9 +821,7 @@ export default function Home() {
 
       <section id="resumes" className="content-section">
         <div className="section-heading">
-          <p>{text.rolePdfs}</p>
           <h2>{text.resumeSectionTitle}</h2>
-          <span>{text.resumeSectionText}</span>
         </div>
         <div className="resume-grid">
           {resumes.map((resume) => (
@@ -849,32 +834,7 @@ export default function Home() {
         </div>
       </section>
 
-      <section id="demo-framework" className="demo-framework">
-        <div className="section-heading compact">
-          <p>{text.demoLabel}</p>
-          <h2>{text.demoTitle}</h2>
-          <span>{text.demoText}</span>
-        </div>
-        <div className="proof-grid">
-          {proofItems.map((item) => (
-            <div className="proof-card" key={item.title.en}>
-              <strong>{item.title[language]}</strong>
-              <p>{item.text[language]}</p>
-            </div>
-          ))}
-        </div>
-        <div className="demo-roadmap">
-          <div>
-            <strong>{text.bestNext}</strong>
-            <p>{text.bestNextText}</p>
-          </div>
-          <div>
-            <strong>{text.linkPlacement}</strong>
-            <p>{text.linkPlacementText}</p>
-          </div>
-        </div>
-      </section>
-
+      
       <section id="contact" className="contact-section">
         <div>
           <p className="eyebrow">Contact</p>
