@@ -48,8 +48,6 @@ const ui = {
     nav: ["Projects", "Resumes", "Contact"],
     eyebrow: "Portfolio / Demo Hub",
     heroTitle: "AI applications, Android apps and VR simulation systems.",
-    heroLead:
-      "Computer Science graduate with React/FastAPI AI projects, native Android work, first-author research papers and UE4 VR interaction experience.",
     viewProjects: "View Projects",
     featuredProjects: "Featured Projects",
     rolePdfs: "Role-specific PDFs",
@@ -61,8 +59,6 @@ const ui = {
     nav: ["项目展示", "简历", "联系方式"],
     eyebrow: "作品集 / Demo Hub",
     heroTitle: "个人项目/作品",
-    heroLead:
-      "计算机科学背景，项目覆盖 React/FastAPI AI 应用、原生 Android、第一作者论文，以及 UE4 VR 交互仿真。",
     viewProjects: "查看项目",
     resumeSectionTitle: "个人简历",
     demoMaterial: "Demo 素材：",
@@ -86,16 +82,16 @@ const tracks: { id: TrackId; label: Localized; headline: Localized; description:
     headline: { en: "AI applications, RAG systems and published ML research.", zh: "AI 应用、RAG 系统与已发表机器学习相关研究" },
     description: {
       en: "React/FastAPI projects, LLM workflows, recommendation experiments and first-author research papers.",
-      zh: "突出 React/FastAPI、LLM 工作流、推荐实验和第一作者论文，适合 AI 应用开发与 Python 后端方向。",
+      zh: "React/FastAPI、LLM 工作流、推荐实验和第一作者论文",
     },
   },
   {
     id: "android",
     label: { en: "Android", zh: "Android 客户端" },
-    headline: { en: "Modern Android apps, media playback and BLE data collection.", zh: "现代 Android 应用、媒体播放与 BLE 数据采集。" },
+    headline: { en: "Modern Android apps, media playback and BLE data collection.", zh: "现代 Android 应用、媒体播放与 BLE 数据采集" },
     description: {
       en: "Kotlin/Java Android work covering Jetpack Compose, Room, MVVM, StateFlow, Service, MediaPlayer, permissions and sensor data capture.",
-      zh: "覆盖 Kotlin/Java、Jetpack Compose、Room、MVVM、StateFlow、Service、MediaPlayer、权限适配和传感器数据采集。",
+      zh: "覆盖 Kotlin/Java、Jetpack Compose、Room、MVVM、StateFlow、Service、MediaPlayer、权限适配和传感器数据采集",
     },
   },
   {
@@ -104,7 +100,7 @@ const tracks: { id: TrackId; label: Localized; headline: Localized; description:
     headline: { en: "UE4 VR interaction and data-driven simulation systems.", zh: "UE4 VR 交互与数据驱动仿真系统。" },
     description: {
       en: "Gameplay logic, VR interaction modes, truck task systems, Blueprint refactoring and real-world data driven simulation.",
-      zh: "突出 Gameplay 逻辑、VR 交互模式、卡车任务系统、蓝图重构和真实数据驱动仿真。",
+      zh: "Gameplay 逻辑、VR 交互模式、卡车任务系统、蓝图重构和真实数据驱动仿真。",
     },
   },
 ];
@@ -568,7 +564,6 @@ export default function Home() {
           
           <p className="eyebrow">{text.eyebrow}</p>
           <h1>{text.heroTitle}</h1>
-          <p className="hero-lede">{text.heroLead}</p>
           <div className="hero-actions">
             <a className="primary-action" href="#projects">
               {text.viewProjects}
