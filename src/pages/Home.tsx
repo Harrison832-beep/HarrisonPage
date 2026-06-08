@@ -45,7 +45,7 @@ const projectTracks = (project: Project) => (Array.isArray(project.track) ? proj
 
 const ui = {
   en: {
-    nav: ["Projects", "Resumes", "Contact"],
+    nav: ["Projects", "About", "Resumes", "Contact"],
     eyebrow: "Portfolio / Demo Hub",
     heroTitle: "AI applications, Android apps and VR simulation systems.",
     viewProjects: "View Projects",
@@ -56,7 +56,7 @@ const ui = {
     contactRole: "Android / AI full-stack / Game and VR development",
   },
   zh: {
-    nav: ["项目展示", "简历", "联系方式"],
+    nav: ["项目展示", "关于我", "简历", "联系方式"],
     eyebrow: "作品集 / Demo Hub",
     heroTitle: "个人项目/作品",
     viewProjects: "查看项目",
@@ -545,8 +545,9 @@ export default function Home() {
         <div className="nav-actions">
           <div className="nav-links" aria-label="Primary navigation">
             <a href="#projects">{text.nav[0]}</a>
-            <a href="#resumes">{text.nav[1]}</a>
-            <a href="#contact">{text.nav[2]}</a>
+            <a href={asset("about")}>{text.nav[1]}</a>
+            <a href="#resumes">{text.nav[2]}</a>
+            <a href="#contact">{text.nav[3]}</a>
           </div>
           <div className="language-toggle" aria-label="Language switcher">
             <button className={language === "zh" ? "active" : ""} onClick={() => setLanguage("zh")} type="button">
