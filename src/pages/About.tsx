@@ -203,7 +203,7 @@ const educationTimeline: EducationTimelineItem[] = [
   },
   {
     year: "2018.09",
-    title: { zh: "校考", en: "Undergraduate Stage" },
+    title: { zh: "本科开始", en: "Undergraduate Stage" },
     detail: { zh: "在宁波诺丁汉大学开始本科学习，加入UNNC民舞队、UNNC合唱团继续表演之路", en: "Placeholder: add UNNC, undergraduate study, societies and early project experiences here." },
   },
   {
