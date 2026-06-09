@@ -577,7 +577,7 @@ export default function Home() {
           </div>
         </div>
         <figure className="hero-media">
-          <img src={heroImage.src} alt={heroImage.alt[language]} />
+          <img className="hero-project-image" src={heroImage.src} alt={heroImage.alt[language]} />
           <button
             className="hero-image-arrow previous"
             onClick={() => setActiveHeroImage((current) => (current - 1 + heroImages.length) % heroImages.length)}

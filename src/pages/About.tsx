@@ -20,6 +20,11 @@ type EducationTimelineItem = {
   title: Localized;
   detail: Localized;
 };
+type TravelPhotoGroup = {
+  id: string;
+  title: Localized;
+  photos: string[];
+};
 
 const base = import.meta.env.BASE_URL;
 const asset = (path: string) => `${base}${path.replace(/^\//, "")}`;
@@ -31,17 +36,19 @@ const copy = {
     eyebrow: "About / Campus Life",
     title: "关于我",
     lead: [
-      "Hi！我的名字是陈起成，英文名 Harrison，目前有乔治华盛顿大学（GWU）的计算机科学硕士学位，本科就读于宁波诺丁汉大学（UNNC），目前有两篇 AI 领域论文发表。",
-      "在自己的专业之外，我还喜欢中国古典舞、声乐、钢琴。高中时期机缘巧合之下选择了学习中国古典舞，并在高三参加了半年的艺考集训。2017 年 12 月参加全海南省艺术生统考，成绩约 300 名；统考后去全国各地参加艺术学院校考和特长生考试，包括浙江音乐学院、星海音乐学院、北京师范大学、华东师范大学特长生、华南理工大学特长生、中山大学特长生，并在特长生考试中获得高考分数减免。之后我以出国留学为目标报考了宁波诺丁汉大学，也继续参加中国舞社团，以兴趣爱好的方式表演中国舞。",
+      "Hi！我的名字是陈起成，英文名 Harrison，目前有乔治华盛顿大学（GWU）的计算机科学硕士学位和宁波诺丁汉大学（UNNC）的计算机科学学士学位，在AI领域有两篇论文发表，主要想发展的技术方向是AI应用开发、客户端开发或者是游戏类开发。",
+      "除了专业之外，我还喜欢中国古典舞、声乐、钢琴。高中时期机缘巧合之下选择了学习中国古典舞，并在高三参加了半年的艺考集训。2017 年 12 月参加全海南省艺术生统考，成绩约 300 名；统考后去全国各地参加艺术学院校考和特长生考试，包括浙江音乐学院、星海音乐学院、北京师范大学、华东师范大学特长生、华南理工大学特长生、中山大学特长生，并在特长生考试中获得高考分数减免。之后我以出国留学为目标报考了宁波诺丁汉大学，虽然最后没有在古典舞专业这条路上走，我也继续以中国舞为兴趣，参加了UNNC的民舞队和UNNC合唱团，继续在舞台上表演。",
+      "去美国读硕士期间也在假期自驾从DC去了美国和加拿大的很多地方，包括Virginia的仙纳度（shenandoah）国家公园、卢雷（Luray）洞穴、黄石公园、尼亚加拉瀑布（加拿大+Buffalo两岸都去过）、多伦多、纽约、魁北克城堡、蒙特利尔、罗切斯特、奥兰多环球影城。"
     ],
     introTitle: "教育经历",
     intro:
       "",
     focusTitle: "我希望这个页面表达什么",
     focusItems: ["能长期投入一件事", "愿意在团队里沟通和协作", "不仅有项目结果，也有真实经历和表达能力"],
+    travelTitle: "旅行照片",
+    travelText: "读硕士期间自驾和旅行留下的一些照片，按地区分组横向滚动浏览。",
     videoTitle: "校园经历影像",
     videoText: "每段经历的视频和照片放在同一个固定展示框里，可以切换查看，避免素材全部堆在页面上。",
-    timelineTitle: "经历关键词",
     previous: "上一张",
     next: "下一张",
     video: "视频",
@@ -62,9 +69,10 @@ const copy = {
       "I am Qicheng Chen, with a Computer Science background and project experience across AI applications, Android client development, data visualization and VR simulation. Beyond technical work, I want this site to show a more complete picture: campus activities, stage moments, photos and the kind of commitment, collaboration and communication that are hard to capture in bullet points.",
     focusTitle: "What This Page Adds",
     focusItems: ["Long-term commitment", "Communication and teamwork", "Real experiences beyond project outcomes"],
+    travelTitle: "Travel Photos",
+    travelText: "A few travel photos from my master's years, grouped by location and browsable horizontally.",
     videoTitle: "Campus Media",
     videoText: "Each experience keeps its own videos and photos in a fixed media frame with simple switching controls.",
-    timelineTitle: "Experience Keywords",
     previous: "Previous",
     next: "Next",
     video: "Video",
@@ -212,18 +220,87 @@ const educationTimeline: EducationTimelineItem[] = [
   },
 ];
 
-const timeline: { label: Localized; text: Localized }[] = [
+const travelPhotoGroups: TravelPhotoGroup[] = [
   {
-    label: { zh: "校园活动", en: "Campus Activities" },
-    text: { zh: "把活动视频和照片集中到一个页面，作为简历之外的个人侧面。", en: "Campus photos and clips collected as a personal layer beyond the resume." },
+    id: "dc",
+    title: { zh: "DC", en: "DC" },
+    photos: [
+      "微信图片_20260609164921_85_42.jpg",
+      "微信图片_20260609164923_86_42.jpg",
+      "微信图片_20260609164924_87_42.jpg",
+      "微信图片_20260609164925_88_42.jpg",
+      "微信图片_20260609164926_89_42.jpg",
+      "微信图片_20260609165416_95_42.jpg",
+      "微信图片_20260609165417_96_42.jpg",
+      "微信图片_20260609165418_97_42.jpg",
+      "微信图片_20260609165419_98_42.jpg",
+      "微信图片_20260609165420_99_42.jpg",
+      "微信图片_20260609165421_100_42.jpg",
+    ],
   },
   {
-    label: { zh: "舞台经历", en: "Stage Experience" },
-    text: { zh: "展示训练、协作、表达和现场完成度。", en: "Practice, coordination, expression and live delivery." },
+    id: "grand-teton",
+    title: { zh: "Grand Teton", en: "Grand Teton" },
+    photos: [
+      "微信图片_20260609165658_112_42.jpg",
+      "微信图片_20260609165659_113_42.jpg",
+      "微信图片_20260609165700_114_42.jpg",
+      "微信图片_20260609165701_115_42.jpg",
+      "微信图片_20260609165702_116_42.jpg",
+      "微信图片_20260609165703_117_42.jpg",
+      "微信图片_20260609165704_118_42.jpg",
+      "微信图片_20260609165705_119_42.jpg",
+      "微信图片_20260609165706_120_42.jpg",
+      "微信图片_20260609165707_121_42.jpg",
+      "微信图片_20260609165708_122_42.jpg",
+    ],
   },
   {
-    label: { zh: "技术主页补充", en: "Portfolio Context" },
-    text: { zh: "主站仍然以项目为核心，这一页补充更完整的人。", en: "The main site stays project-focused; this page adds the human context." },
+    id: "montreal",
+    title: { zh: "Montreal", en: "Montreal" },
+    photos: [
+      "微信图片_20260609164848_65_42.jpg",
+      "微信图片_20260609164849_66_42.jpg",
+      "微信图片_20260609164850_67_42.jpg",
+      "微信图片_20260609164851_68_42.jpg",
+      "微信图片_20260609164852_69_42.jpg",
+      "微信图片_20260609164853_70_42.jpg",
+      "微信图片_20260609164902_71_42.jpg",
+      "微信图片_20260609164903_72_42.jpg",
+      "微信图片_20260609164904_73_42.jpg",
+      "微信图片_20260609164906_74_42.jpg",
+    ],
+  },
+  {
+    id: "quebec",
+    title: { zh: "Quebec", en: "Quebec" },
+    photos: [
+      "微信图片_20260609164909_75_42.jpg",
+      "微信图片_20260609164910_76_42.jpg",
+      "微信图片_20260609164911_77_42.jpg",
+      "微信图片_20260609164912_78_42.jpg",
+      "微信图片_20260609164913_79_42.jpg",
+      "微信图片_20260609164914_80_42.jpg",
+      "微信图片_20260609164916_81_42.jpg",
+      "微信图片_20260609164917_82_42.jpg",
+      "微信图片_20260609164918_83_42.jpg",
+      "微信图片_20260609164921_84_42.jpg",
+    ],
+  },
+  {
+    id: "rochester",
+    title: { zh: "Rochester", en: "Rochester" },
+    photos: [
+      "微信图片_20260609164844_61_42.jpg",
+      "微信图片_20260609164845_62_42.jpg",
+      "微信图片_20260609164846_63_42.jpg",
+      "微信图片_20260609164847_64_42.jpg",
+      "微信图片_20260609164928_90_42.jpg",
+      "微信图片_20260609164929_91_42.jpg",
+      "微信图片_20260609164931_92_42.jpg",
+      "微信图片_20260609164932_93_42.jpg",
+      "微信图片_20260609164933_94_42.jpg",
+    ],
   },
 ];
 
@@ -282,6 +359,37 @@ export default function About() {
               <div className="education-detail">
                 <strong>{item.title[language]}</strong>
                 <p>{item.detail[language]}</p>
+              </div>
+            </article>
+          ))}
+        </div>
+      </section>
+
+      <section className="about-section travel-photo-section">
+        <div className="about-section-heading">
+          <div>
+            <p className="section-kicker">{text.travelTitle}</p>
+          </div>
+          <span>{text.travelText}</span>
+        </div>
+        <div className="travel-photo-groups">
+          {travelPhotoGroups.map((group) => (
+            <article className="travel-photo-group" key={group.id}>
+              <div className="travel-photo-heading">
+                <strong>{group.title[language]}</strong>
+                <span>
+                  {group.photos.length} {language === "zh" ? "张照片" : "photos"}
+                </span>
+              </div>
+              <div className="travel-photo-strip" aria-label={`${group.title[language]} ${text.travelTitle}`}>
+                {group.photos.map((photo, index) => {
+                  const src = asset(`media/pictures/${group.title.en}/${photo}`);
+                  return (
+                    <a href={src} key={photo} target="_blank" rel="noreferrer">
+                      <img src={src} alt={`${group.title[language]} ${index + 1}`} loading="lazy" />
+                    </a>
+                  );
+                })}
               </div>
             </article>
           ))}
@@ -358,18 +466,6 @@ export default function About() {
               </article>
             );
           })}
-        </div>
-      </section>
-
-      <section className="about-section about-timeline-section">
-        <p className="section-kicker">{text.timelineTitle}</p>
-        <div className="about-timeline">
-          {timeline.map((item) => (
-            <div key={item.label.en}>
-              <strong>{item.label[language]}</strong>
-              <p>{item.text[language]}</p>
-            </div>
-          ))}
         </div>
       </section>
 
