@@ -577,7 +577,13 @@ export default function Home() {
           </div>
         </div>
         <figure className="hero-media">
-          <img className="hero-project-image" src={heroImage.src} alt={heroImage.alt[language]} />
+          <img
+            className="hero-project-image"
+            src={heroImage.src}
+            alt={heroImage.alt[language]}
+            draggable={false}
+            onContextMenu={(event) => event.preventDefault()}
+          />
           <button
             className="hero-image-arrow previous"
             onClick={() => setActiveHeroImage((current) => (current - 1 + heroImages.length) % heroImages.length)}
@@ -647,7 +653,13 @@ export default function Home() {
                     <div className="media-carousel">
                       <div className="media-frame">
                       {activeMedia?.kind === "image" ? (
-                        <img className="fit-contain-media" src={activeMediaSrc} alt={activeMedia.label[language]} />
+                        <img
+                          className="fit-contain-media"
+                          src={activeMediaSrc}
+                          alt={activeMedia.label[language]}
+                          draggable={false}
+                          onContextMenu={(event) => event.preventDefault()}
+                        />
                       ) : (
                         <video
                           key={activeMediaSrc}
@@ -706,6 +718,8 @@ export default function Home() {
                       className={project.mediaFit === "contain" ? "contain-media" : undefined}
                       src={project.image}
                       alt={project.imageAlt?.[language] ?? `${project.title[language]} preview`}
+                      draggable={false}
+                      onContextMenu={(event) => event.preventDefault()}
                     />
                   ) : (
                     <div className="project-placeholder">
@@ -747,7 +761,13 @@ export default function Home() {
                           target="_blank"
                           rel="noreferrer"
                         >
-                          <img src={item.src} alt={item.title[language]} loading="lazy" />
+                          <img
+                            src={item.src}
+                            alt={item.title[language]}
+                            loading="lazy"
+                            draggable={false}
+                            onContextMenu={(event) => event.preventDefault()}
+                          />
                           <span>{item.title[language]}</span>
                         </a>
                       ))}
@@ -756,7 +776,13 @@ export default function Home() {
                   {project.demoAssets && project.demoAssetDisplay !== "grid" ? (
                     <div className="demo-carousel" aria-label={`${project.title[language]} demo assets`}>
                       <a href={activeDemoAsset?.src} target="_blank" rel="noreferrer">
-                        <img src={activeDemoAsset?.src} alt={activeDemoAsset?.title[language]} loading="lazy" />
+                        <img
+                          src={activeDemoAsset?.src}
+                          alt={activeDemoAsset?.title[language]}
+                          loading="lazy"
+                          draggable={false}
+                          onContextMenu={(event) => event.preventDefault()}
+                        />
                       </a>
                       {project.demoAssets.length > 1 ? (
                         <>
@@ -846,6 +872,11 @@ export default function Home() {
             GitHub
           </a>
         </div>
+        <p className="copyright-notice">
+          {language === "en"
+            ? "© 2026 Qicheng Chen. All rights reserved. Photos, videos, resumes and personal media may not be copied, downloaded, reused or redistributed without written permission."
+            : "© 2026 陈起成。保留所有权利。本站照片、视频、简历及个人影像资料未经本人书面许可，不得复制、下载、转载、改编或再次分发。"}
+        </p>
       </section>
     </main>
   );

@@ -38,6 +38,8 @@ button {
 
 img {
   display: block;
+  user-select: none;
+  -webkit-user-drag: none;
 }
 
 .site-shell {
@@ -916,6 +918,7 @@ img {
 .contact-section {
   display: flex;
   align-items: center;
+  flex-wrap: wrap;
   justify-content: space-between;
   gap: 24px;
   margin-bottom: 48px;
@@ -962,6 +965,17 @@ img {
 
 .contact-links a:hover {
   background: rgba(255, 255, 255, 0.08);
+}
+
+.copyright-notice {
+  flex-basis: 100%;
+  margin: 0;
+  border-top: 1px solid rgba(255, 255, 255, 0.14);
+  padding-top: 18px;
+  color: #cbd7d6;
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 1.65;
 }
 
 .about-page {
@@ -1108,7 +1122,7 @@ img {
 .education-necklace {
   position: relative;
   display: grid;
-  grid-template-columns: repeat(6, minmax(0, 1fr));
+  grid-template-columns: repeat(var(--education-count, 6), minmax(76px, 1fr));
   align-items: start;
   margin-top: 32px;
   padding: 76px 18px 34px;
@@ -1124,8 +1138,8 @@ img {
 .education-necklace::before {
   position: absolute;
   top: 88px;
-  right: calc(8.333% + 7px);
-  left: calc(8.333% + 7px);
+  right: calc(var(--education-edge, 8.333%) + 7px);
+  left: calc(var(--education-edge, 8.333%) + 7px);
   height: 2px;
   background: #c2c9c5;
   content: "";
@@ -1251,7 +1265,8 @@ img {
   border: 1px solid #c6d0c5;
   border-radius: 8px;
   background: #ffffff;
-  padding: 18px;
+  padding: 0;
+  overflow: hidden;
 }
 
 .travel-photo-heading {
@@ -1259,7 +1274,44 @@ img {
   align-items: center;
   justify-content: space-between;
   gap: 16px;
-  margin-bottom: 14px;
+  margin: 0;
+  padding: 22px;
+}
+
+.travel-photo-toggle {
+  width: 100%;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  cursor: pointer;
+  font: inherit;
+  text-align: left;
+}
+
+.travel-photo-toggle:hover,
+.travel-photo-toggle:focus-visible {
+  background: #f0f3ee;
+  outline: none;
+}
+
+.travel-photo-group.expanded .travel-photo-heading {
+  border-bottom: 1px solid #d6ded3;
+}
+
+.travel-photo-panel {
+  max-height: 0;
+  overflow: hidden;
+  opacity: 0;
+  pointer-events: none;
+  transform: translateY(-8px);
+  transition: max-height 360ms ease, opacity 240ms ease, transform 300ms ease;
+}
+
+.travel-photo-group.expanded .travel-photo-panel {
+  max-height: 620px;
+  opacity: 1;
+  pointer-events: auto;
+  transform: translateY(0);
 }
 
 .travel-photo-heading strong {
@@ -1270,44 +1322,60 @@ img {
   letter-spacing: 0;
 }
 
-.travel-photo-heading span {
+.travel-photo-meta {
+  display: inline-flex;
+  align-items: center;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 8px;
   color: #687984;
   font-size: 13px;
   font-weight: 850;
 }
 
+.travel-photo-action {
+  min-width: 58px;
+  border: 1px solid #c6d0c5;
+  border-radius: 999px;
+  padding: 6px 12px;
+  color: #1d4f5a;
+  font-weight: 900;
+  text-align: center;
+}
+
 .travel-photo-strip {
   display: flex;
-  gap: 12px;
+  gap: 18px;
   overflow-x: auto;
   overscroll-behavior-inline: contain;
-  padding: 0 0 10px;
-  scroll-snap-type: x proximity;
+  padding: 22px 74px 24px;
+  scroll-padding-inline: 74px;
+  scroll-snap-type: x mandatory;
   scrollbar-color: #9bb4b8 #edf1ec;
   scrollbar-width: thin;
 }
 
-.travel-photo-strip a {
-  display: block;
-  width: 260px;
-  height: 188px;
+.travel-photo-item {
+  width: min(860px, calc(100% - 148px));
+  height: clamp(370px, 55vw, 520px);
+  margin: 0;
   flex: 0 0 auto;
   overflow: hidden;
   border: 1px solid #d6ded3;
   border-radius: 8px;
   background: #edf1ec;
-  scroll-snap-align: start;
+  scroll-snap-align: center;
 }
 
 .travel-photo-strip img {
   width: 100%;
   height: 100%;
-  object-fit: cover;
+  object-fit: contain;
+  object-position: center;
   transition: transform 220ms ease;
 }
 
-.travel-photo-strip a:hover img,
-.travel-photo-strip a:focus-visible img {
+.travel-photo-item:hover img {
   transform: scale(1.03);
 }
 
@@ -1761,8 +1829,8 @@ img {
   }
 
   .education-necklace::before {
-    right: calc(8.333% + 7px);
-    left: calc(8.333% + 7px);
+    right: calc(var(--education-edge, 8.333%) + 7px);
+    left: calc(var(--education-edge, 8.333%) + 7px);
   }
 
   .education-node {
@@ -1770,9 +1838,19 @@ img {
     height: 14px;
   }
 
-  .travel-photo-strip a {
-    width: 230px;
-    height: 166px;
+  .travel-photo-strip {
+    padding-right: 48px;
+    padding-left: 48px;
+    scroll-padding-inline: 48px;
+  }
+
+  .travel-photo-group.expanded .travel-photo-panel {
+    max-height: 540px;
+  }
+
+  .travel-photo-item {
+    width: min(720px, calc(100% - 96px));
+    height: clamp(290px, 48vw, 400px);
   }
 }
 
@@ -1865,9 +1943,10 @@ img {
   }
 
   .education-necklace {
-    grid-template-columns: repeat(6, 78px);
+    grid-template-columns: repeat(var(--education-count, 6), 82px);
     overflow-x: auto;
     padding: 72px 8px 42px;
+    scrollbar-width: thin;
   }
 
   .education-necklace:has(.education-necklace-item:hover),
@@ -1878,8 +1957,8 @@ img {
 
   .education-necklace::before {
     top: 84px;
-    right: 39px;
-    left: 39px;
+    right: 49px;
+    left: 49px;
   }
 
   .education-node {
@@ -1898,18 +1977,30 @@ img {
   }
 
   .travel-photo-group {
-    padding: 14px;
+    padding: 0;
   }
 
   .travel-photo-heading {
     align-items: flex-start;
     flex-direction: column;
     gap: 4px;
+    padding: 16px;
   }
 
-  .travel-photo-strip a {
-    width: 210px;
-    height: 154px;
+  .travel-photo-strip {
+    gap: 12px;
+    padding-right: 24px;
+    padding-left: 24px;
+    scroll-padding-inline: 24px;
+  }
+
+  .travel-photo-group.expanded .travel-photo-panel {
+    max-height: 430px;
+  }
+
+  .travel-photo-item {
+    width: calc(100% - 48px);
+    height: clamp(230px, 64vw, 320px);
   }
 
   .about-photo-grid {

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { type CSSProperties, useState } from "react";
 
 type Language = "zh" | "en";
 type Localized = Record<Language, string>;
@@ -43,8 +43,6 @@ const copy = {
     introTitle: "教育经历",
     intro:
       "",
-    focusTitle: "我希望这个页面表达什么",
-    focusItems: ["能长期投入一件事", "愿意在团队里沟通和协作", "不仅有项目结果，也有真实经历和表达能力"],
     travelTitle: "旅行照片",
     travelText: "读硕士期间自驾和旅行留下的一些照片，按地区分组横向滚动浏览。",
     videoTitle: "校园经历影像",
@@ -191,32 +189,37 @@ const educationTimeline: EducationTimelineItem[] = [
   {
     year: "2015",
     title: { zh: "起点", en: "Starting Point" },
-    detail: { zh: "占位文字：这一年开始接触新的学习方向，也为后续经历埋下伏笔。", en: "Placeholder: this year opened a new direction and set up later experiences." },
+    detail: { zh: "在海口市第一中学开始高中学习，寒假开始了中国舞学习之路", en: "Placeholder: this year opened a new direction and set up later experiences." },
   },
   {
     year: "2017",
-    title: { zh: "艺考与选择", en: "Art Exam and Choice" },
-    detail: { zh: "占位文字：这里之后可以补充艺考集训、统考、校考或特长生考试相关经历。", en: "Placeholder: add art training, provincial exam, school auditions or special-talent exam details here." },
+    title: { zh: "艺考", en: "Art Exam and Choice" },
+    detail: { zh: "舞蹈集训，开始报考各个艺术类院校和特长生项目，12月参加海南省统考", en: "Placeholder: add art training, provincial exam, school auditions or special-talent exam details here." },
   },
   {
-    year: "2018",
-    title: { zh: "本科阶段", en: "Undergraduate Stage" },
-    detail: { zh: "占位文字：这里可以写宁波诺丁汉大学、本科专业、社团和早期项目经历。", en: "Placeholder: add UNNC, undergraduate study, societies and early project experiences here." },
+    year: "2018.01",
+    title: { zh: "校考", en: "Undergraduate Stage" },
+    detail: { zh: "18年年初开始去各个院校现场参加校考，浙江音乐学院、星海音乐学院、华南理工大学、华东师范大学等", en: "Placeholder: add UNNC, undergraduate study, societies and early project experiences here." },
+  },
+  {
+    year: "2018.09",
+    title: { zh: "校考", en: "Undergraduate Stage" },
+    detail: { zh: "在宁波诺丁汉大学开始本科学习，加入UNNC民舞队、UNNC合唱团继续表演之路", en: "Placeholder: add UNNC, undergraduate study, societies and early project experiences here." },
   },
   {
     year: "2022",
-    title: { zh: "研究与项目", en: "Research and Projects" },
-    detail: { zh: "占位文字：这里可以补充研究项目、课程项目、VR 或 AI 相关经历。", en: "Placeholder: add research projects, coursework, VR or AI-related experience here." },
+    title: { zh: "本科毕业与申研", en: "Research and Projects" },
+    detail: { zh: "从宁波诺丁汉大学毕业，开始准备申报美国大学", en: "Placeholder: add research projects, coursework, VR or AI-related experience here." },
   },
   {
     year: "2023",
-    title: { zh: "论文发表", en: "Publication" },
-    detail: { zh: "占位文字：这里可以放第一作者论文、压力检测项目和相关实验经历。", en: "Placeholder: add first-author publication, stress analysis project and experiment details here." },
+    title: { zh: "研究生开始", en: "Publication" },
+    detail: { zh: "8月前往美国华盛顿特区开始硕士学习，独自坐飞机在日本停留中转->Arlington", en: "Placeholder: add first-author publication, stress analysis project and experiment details here." },
   },
   {
     year: "2025",
-    title: { zh: "硕士与求职", en: "Master's and Career" },
-    detail: { zh: "占位文字：这里可以写 GWU 硕士、AI 全栈/客户端方向作品集和求职目标。", en: "Placeholder: add GWU master's study, AI full-stack/client portfolio and career goals here." },
+    title: { zh: "硕士结束", en: "Master's and Career" },
+    detail: { zh: "因签证原因中断一个学期，暑期完成硕士，回国", en: "Placeholder: add GWU master's study, AI full-stack/client portfolio and career goals here." },
   },
 ];
 
@@ -307,10 +310,19 @@ const travelPhotoGroups: TravelPhotoGroup[] = [
 export default function About() {
   const [language, setLanguage] = useState<Language>("zh");
   const [activeMediaByExperience, setActiveMediaByExperience] = useState<Record<string, number>>({});
+  const [expandedTravelGroups, setExpandedTravelGroups] = useState<Record<string, boolean>>({});
   const text = copy[language];
+  const educationTimelineStyle = {
+    "--education-count": educationTimeline.length,
+    "--education-edge": `${100 / (educationTimeline.length * 2)}%`,
+  } as CSSProperties & Record<string, string | number>;
 
   const setExperienceMedia = (experienceId: string, index: number) => {
     setActiveMediaByExperience((current) => ({ ...current, [experienceId]: index }));
+  };
+
+  const toggleTravelGroup = (groupId: string) => {
+    setExpandedTravelGroups((current) => ({ ...current, [groupId]: !current[groupId] }));
   };
 
   return (
@@ -345,13 +357,22 @@ export default function About() {
           ))}
         </div>
         <figure className="about-portrait">
-          <img src={asset("media/微信图片_20260603104953_34_42.jpg")} alt={language === "zh" ? "生活合照" : "Personal photo"} />
+          <img
+            src={asset("media/微信图片_20260603104953_34_42.jpg")}
+            alt={language === "zh" ? "生活合照" : "Personal photo"}
+            draggable={false}
+            onContextMenu={(event) => event.preventDefault()}
+          />
         </figure>
       </section>
 
       <section className="about-section education-section">
         <p className="section-kicker">{text.introTitle}</p>
-        <div className="education-necklace" aria-label={language === "zh" ? "教育经历时间线" : "Education timeline"}>
+        <div
+          className="education-necklace"
+          style={educationTimelineStyle}
+          aria-label={language === "zh" ? "教育经历时间线" : "Education timeline"}
+        >
           {educationTimeline.map((item) => (
             <article className="education-necklace-item" key={item.year} tabIndex={0}>
               <span className="education-node" aria-hidden="true" />
@@ -373,26 +394,48 @@ export default function About() {
           <span>{text.travelText}</span>
         </div>
         <div className="travel-photo-groups">
-          {travelPhotoGroups.map((group) => (
-            <article className="travel-photo-group" key={group.id}>
-              <div className="travel-photo-heading">
-                <strong>{group.title[language]}</strong>
-                <span>
-                  {group.photos.length} {language === "zh" ? "张照片" : "photos"}
-                </span>
-              </div>
-              <div className="travel-photo-strip" aria-label={`${group.title[language]} ${text.travelTitle}`}>
-                {group.photos.map((photo, index) => {
-                  const src = asset(`media/pictures/${group.title.en}/${photo}`);
-                  return (
-                    <a href={src} key={photo} target="_blank" rel="noreferrer">
-                      <img src={src} alt={`${group.title[language]} ${index + 1}`} loading="lazy" />
-                    </a>
-                  );
-                })}
-              </div>
-            </article>
-          ))}
+          {travelPhotoGroups.map((group) => {
+            const isExpanded = Boolean(expandedTravelGroups[group.id]);
+            const galleryId = `travel-gallery-${group.id}`;
+
+            return (
+              <article className={isExpanded ? "travel-photo-group expanded" : "travel-photo-group"} key={group.id}>
+                <button
+                  className="travel-photo-heading travel-photo-toggle"
+                  type="button"
+                  aria-controls={galleryId}
+                  aria-expanded={isExpanded}
+                  onClick={() => toggleTravelGroup(group.id)}
+                >
+                  <strong>{group.title[language]}</strong>
+                  <span className="travel-photo-meta">
+                    <span>
+                      {group.photos.length} {language === "zh" ? "张照片" : "photos"}
+                    </span>
+                    <span className="travel-photo-action">{isExpanded ? (language === "zh" ? "收起" : "Collapse") : language === "zh" ? "展开" : "Expand"}</span>
+                  </span>
+                </button>
+                <div className="travel-photo-panel" id={galleryId} aria-hidden={!isExpanded}>
+                  <div className="travel-photo-strip" aria-label={`${group.title[language]} ${text.travelTitle}`}>
+                    {group.photos.map((photo, index) => {
+                      const src = asset(`media/pictures/${group.title.en}/${photo}`);
+                      return (
+                        <figure className="travel-photo-item" key={photo}>
+                          <img
+                            src={src}
+                            alt={`${group.title[language]} ${index + 1}`}
+                            loading="lazy"
+                            draggable={false}
+                            onContextMenu={(event) => event.preventDefault()}
+                          />
+                        </figure>
+                      );
+                    })}
+                  </div>
+                </div>
+              </article>
+            );
+          })}
         </div>
       </section>
 
@@ -426,7 +469,12 @@ export default function About() {
                       Your browser does not support the video tag.
                     </video>
                   ) : (
-                    <img src={activeItem.src} alt={activeItem.title[language]} />
+                    <img
+                      src={activeItem.src}
+                      alt={activeItem.title[language]}
+                      draggable={false}
+                      onContextMenu={(event) => event.preventDefault()}
+                    />
                   )}
                   {experience.media.length > 1 ? (
                     <>
@@ -484,6 +532,11 @@ export default function About() {
             GitHub
           </a>
         </div>
+        <p className="copyright-notice">
+          {language === "en"
+            ? "© 2026 Qicheng Chen. All rights reserved. Photos, videos, resumes and personal media may not be copied, downloaded, reused or redistributed without written permission."
+            : "© 2026 陈起成。保留所有权利。本站照片、视频、简历及个人影像资料未经本人书面许可，不得复制、下载、转载、改编或再次分发。"}
+        </p>
       </section>
     </main>
   );
